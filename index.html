@@ -117,7 +117,11 @@ body { font-family: 'DM Mono', monospace; background: var(--bg); color: var(--te
 
 /* ── TABS ── */
 #tabs { display: flex; gap: 4px; margin-bottom: 10px; }
-.tab-btn { padding: 6px 14px; font-family: 'DM Mono', monospace; font-size: 10px; border: 1px solid var(--border); border-radius: 4px; background: var(--bg2); color: var(--muted); cursor: pointer; letter-spacing: 1px; text-transform: uppercase; transition: all 0.15s; }
+.tab-btn { padding: 6px 14px; font-family: 'DM Mono', monospace; font-size: 10px; border: 1px solid var(--border); border-radius: 4px; background: var(--bg2); color: var(--muted); cursor: pointer; letter-spacing: 1px; text-transform: uppercase; transition: all 0.15s; position: relative; }
+.tab-notify { position: absolute; top: -4px; right: -4px; width: 9px; height: 9px; border-radius: 50%; border: 2px solid var(--bg); display: none; }
+.tab-notify.active { display: block; animation: pulse-dot 1.2s ease-in-out infinite; }
+.tab-notify.gold  { background: var(--gold);  }
+.tab-notify.green { background: var(--green); }
 .tab-btn.active { border-color: var(--gold); color: var(--gold); background: #1a1500; }
 .tab-btn:hover:not(.active) { border-color: var(--border2); color: var(--text); }
 
@@ -639,10 +643,10 @@ body { font-family: 'DM Mono', monospace; background: var(--bg); color: var(--te
   <div id="main">
     <div id="tabs">
       <button class="tab-btn active" onclick="switchTab('actions')">Actions</button>
-      <button class="tab-btn" onclick="switchTab('stall')">Stall</button>
-      <button class="tab-btn" onclick="switchTab('upgrades')">Upgrades</button>
+      <button class="tab-btn" onclick="switchTab('stall')">Stall<span class="tab-notify gold" id="badge-stall"></span></button>
+      <button class="tab-btn" onclick="switchTab('upgrades')">Upgrades<span class="tab-notify green" id="badge-upgrades"></span></button>
       <button class="tab-btn" onclick="switchTab('milestones')">Milestones</button>
-      <button class="tab-btn" onclick="switchTab('staff')">Staff</button>
+      <button class="tab-btn" onclick="switchTab('staff')">Staff<span class="tab-notify green" id="badge-staff"></span></button>
       <button class="tab-btn" onclick="switchTab('prestige')">Prestige</button>
     </div>
     <div id="tab-actions"><div id="action-list"></div></div>
@@ -777,7 +781,7 @@ const ACTIONS = [
     baseTime:12000, desc:'Point a phone at the stove and press record. No ring light yet.',
     earn:'Subs +1–2, XP +10',
     unlockAt:{ level:1, totalCooks:5 },
-    reward(G){ const s=Math.max(1,Math.floor((1+G.level*0.2)*G.mx.sub*(1+G.hype/250))); G.subs+=s; G.xp+=Math.floor(10*G.mx.xp); },
+    reward(G){ const s=Math.max(1,Math.floor((1+G.level*0.2)*G.mx.sub*(1+G.hype/250))); G.subs+=s; const fv=Math.max(2,Math.floor(s*8*G.mx.view)); G.views+=fv; G.xp+=Math.floor(10*G.mx.xp); },
     managerCost:350, managerName:'Camera Intern'
   },
   {
@@ -800,7 +804,7 @@ const ACTIONS = [
     baseTime:16000, desc:'Post to socials, reply to comments, beg friends to subscribe.',
     earn:'Subs +3–10, Hype +8',
     unlockAt:{ subs:10 },
-    reward(G){ const s=Math.max(1,Math.floor((2+G.level*0.4)*G.mx.sub*(1+G.hype/150))); G.subs+=s; G.hype=Math.min(100,G.hype+8); },
+    reward(G){ const s=Math.max(1,Math.floor((2+G.level*0.4)*G.mx.sub*(1+G.hype/150))); G.subs+=s; const pv=Math.max(3,Math.floor(s*5*G.mx.view)); G.views+=pv; G.hype=Math.min(100,G.hype+8); },
     managerCost:700, managerName:'Social Manager'
   },
   {
@@ -853,7 +857,7 @@ const ACTIONS = [
     baseTime:65000, desc:'Aprons, mugs, Ethan-branded everything. Fans become walking billboards.',
     earn:'$120–500 passive, Subs +20',
     unlockAt:{ subs:1000, level:7 },
-    reward(G){ const m=(120+G.subs*0.01)*(1+G.hype/100); G.money+=m; G.subs+=Math.floor(20*G.mx.sub); },
+    reward(G){ const m=(120+G.subs*0.01)*(1+G.hype/100); G.money+=m; const ms=Math.floor(20*G.mx.sub); G.subs+=ms; G.views+=Math.max(10,Math.floor(ms*12*G.mx.view)); },
     managerCost:6500, managerName:'Merch Manager'
   },
   {
@@ -1088,7 +1092,11 @@ function applyPrestigeStartBonuses(){
   if(moneyTier >= 0) G.money = [50, 200, 750, 3000][moneyTier];
 
   const subsTier = getPrestigeTier('pu_start_subs');
-  if(subsTier >= 0) G.subs = [50, 250, 1000, 5000][subsTier];
+  if(subsTier >= 0){
+    const startSubs = [50, 250, 1000, 5000][subsTier];
+    G.subs  = startSubs;
+    G.views = Math.floor(startSubs * 25); // returning fans have a watch history
+  }
 
   const levelTier = getPrestigeTier('pu_start_level');
   if(levelTier >= 0){
@@ -1419,6 +1427,7 @@ function checkUnlocks(){
   updateUpgradeGlow();
   if(currentTab==='prestige') updatePrestigePreview();
   if(currentTab==='staff') updateStaffButtons();
+  updateTabBadges();
   // Sidebar clout preview
   const _cpEl = document.getElementById('clout-preview');
   if(_cpEl){
@@ -1472,6 +1481,7 @@ function buyUpgrade(id){
   notify('✦ Upgrade: '+u.name,'green');
   addLog('Bought upgrade: '+u.name,'good');
   renderUpgrades();
+  updateTabBadges();
   updateStats();
 }
 
@@ -2089,6 +2099,41 @@ function updatePrestigePreview(){
   updateUpgradeGlow(); // also refresh upgrade tab if open
 }
 
+// ────────────────────────────────────────────────
+//  TAB NOTIFICATION BADGES
+// ────────────────────────────────────────────────
+function updateTabBadges(){
+  // Stall — gold dot when customers are waiting
+  const stallBadge = document.getElementById('badge-stall');
+  if(stallBadge){
+    const hasCustomers = stallCustomers.length > 0 && stallUnlocked();
+    stallBadge.classList.toggle('active', hasCustomers);
+  }
+
+  // Upgrades — green dot when any upgrade is unlocked and affordable
+  const upgBadge = document.getElementById('badge-upgrades');
+  if(upgBadge){
+    const hasAffordable = UPGRADES_DEF.some(u =>
+      !G.ownedUpgrades.includes(u.id) && isUpgradeUnlocked(u) && G.money >= u.cost
+    );
+    upgBadge.classList.toggle('active', hasAffordable);
+  }
+
+  // Staff — green dot when any unhired manager is unlocked and affordable
+  const staffBadge = document.getElementById('badge-staff');
+  if(staffBadge){
+    const disc     = getPrestigeTier('pu_manager_disc');
+    const discMult = disc >= 0 ? Math.pow(0.8, disc + 1) : 1;
+    const hasAffordable = ACTIONS.some(a =>
+      a.managerCost && !COOK_IDS.includes(a.id) &&
+      !G.managers.includes(a.id) &&
+      isActionUnlocked(a) &&
+      G.money >= Math.floor(a.managerCost * discMult)
+    );
+    staffBadge.classList.toggle('active', hasAffordable);
+  }
+}
+
 function updateStats(){
   document.getElementById('h-money').textContent = fmtMoney(G.money);
   document.getElementById('h-subs').textContent = fmt(G.subs);
@@ -2222,6 +2267,7 @@ function spawnCustomer(){
     value: getMealPrice(),
   });
   if(currentTab === 'stall') renderStall();
+  updateTabBadges(); // customer arrived
 }
 
 function serveCustomer(id, evt){
@@ -2251,6 +2297,7 @@ function serveCustomer(id, evt){
   G.hype = Math.min(100, G.hype + 0.5);
   stallCustomers.splice(idx, 1);
   renderStall();
+  updateTabBadges(); // customer served
   updateStats();
   addLog(c.name + ' bought a meal for ' + fmtMoney(earned), 'good');
 }
@@ -2275,7 +2322,10 @@ function tickStall(){
     }
     return true;
   });
-  if(changed && currentTab === 'stall') renderStall();
+  if(changed){
+    if(currentTab === 'stall') renderStall();
+    updateTabBadges(); // customer left
+  }
 }
 
 stallTickTimer = setInterval(tickStall, 120);
@@ -2435,10 +2485,10 @@ function switchTab(tab){
 
 setInterval(()=>{
   G.hype = Math.max(0, G.hype - getHypeDecayRate());
-  if(G.hype>25 && G.totalFilmed>0){
+  if(G.hype>25 && G.totalEdits>0){
     G.subs += G.hype/100 * G.mx.sub * 0.1;
+    G.views += G.subs*0.00005*G.mx.view;
   }
-  if(G.totalEdits>0) G.views += G.subs*0.00005*G.mx.view;
   G.tick++;
   updateStats();
   checkMilestones();
