@@ -162,14 +162,6 @@ body { font-family: 'DM Mono', monospace; background: var(--bg); color: var(--te
 #prestige-card { background: #1a0808; border: 1px solid #5a1a1a; border-radius: 8px; padding: 12px; }
 #prestige-card h3 { font-family: 'Bebas Neue', sans-serif; font-size: 20px; color: var(--red); letter-spacing: 2px; margin-bottom: 4px; }
 #prestige-card p { font-size: 10px; color: var(--muted); margin-bottom: 10px; line-height: 1.5; }
-#prestige-confirm-zone { display: none; margin-top: 8px; }
-#prestige-confirm-zone p { color: var(--red); margin-bottom: 8px; }
-.prestige-btns { display: flex; gap: 6px; }
-.pbtn { flex: 1; padding: 7px; font-family: 'DM Mono', monospace; font-size: 10px; border-radius: 4px; cursor: pointer; letter-spacing: 1px; }
-.pbtn-yes { background: #5a1a1a; border: 1px solid var(--red); color: var(--red); }
-.pbtn-yes:hover { background: var(--red); color: #fff; }
-.pbtn-no { background: var(--bg3); border: 1px solid var(--border2); color: var(--muted); }
-.pbtn-no:hover { background: var(--border2); color: var(--text); }
 #go-viral-btn { width: 100%; padding: 9px; font-family: 'DM Mono', monospace; font-size: 11px; border-radius: 5px; cursor: pointer; border: 1px solid #5a1a1a; background: #1a0808; color: var(--red); letter-spacing: 1px; transition: all 0.2s; }
 #go-viral-btn:hover:not(:disabled) { background: #5a1a1a; border-color: var(--red); }
 #go-viral-btn:disabled { opacity: 0.3; cursor: not-allowed; }
@@ -238,6 +230,83 @@ body { font-family: 'DM Mono', monospace; background: var(--bg); color: var(--te
 .pu-btn.pu-maxed-btn { border-color:#1a3a1a; color:var(--green); }
 .prestige-empty { text-align:center; padding:32px 16px; color:var(--muted); font-size:10px; line-height:1.9; }
 .prestige-empty .big { font-size:28px; margin-bottom:8px; }
+
+
+/* ── STAFF TAB ── */
+.staff-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+@media(max-width:700px){ .staff-grid{grid-template-columns:1fr;} }
+
+.staff-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; transition: border-color 0.15s; }
+.staff-card.hired   { border-color: var(--green); background: #0c1a0e; }
+.staff-card.affordable { border-color: var(--gold); }
+.staff-card.locked-staff { opacity: 0.4; }
+
+.staff-card-top { display: flex; align-items: center; gap: 12px; padding: 12px 14px 8px; }
+.staff-anim-icon { width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; font-size: 28px; flex-shrink: 0; background: var(--bg3); border-radius: 8px; border: 1px solid var(--border); position: relative; overflow: hidden; }
+.staff-anim-icon .icon-inner { display: inline-block; }
+
+/* Per-manager animations (applied to .icon-inner) */
+@keyframes mgr-slide    { 0%,100%{transform:translateX(-5px)} 50%{transform:translateX(5px)} }
+@keyframes mgr-blink    { 0%,45%,55%,100%{opacity:1} 50%{opacity:0} }
+@keyframes mgr-snip     { 0%,100%{transform:rotate(-18deg) scale(1)} 50%{transform:rotate(18deg) scale(1.1)} }
+@keyframes mgr-bounce   { 0%,100%{transform:translateY(0)} 45%{transform:translateY(-8px)} 55%{transform:translateY(-8px)} }
+@keyframes mgr-swing    { 0%,100%{transform:rotate(-20deg) translateX(-2px)} 50%{transform:rotate(20deg) translateX(2px)} }
+@keyframes mgr-pulse    { 0%,100%{transform:scale(1)} 50%{transform:scale(1.2)} }
+@keyframes mgr-bob      { 0%,100%{transform:translateY(0) rotate(0deg)} 40%{transform:translateY(-5px) rotate(-8deg)} 70%{transform:translateY(-2px) rotate(6deg)} }
+@keyframes mgr-spin     { 0%{transform:rotateY(0deg)} 100%{transform:rotateY(360deg)} }
+@keyframes mgr-fire     { 0%,100%{transform:scale(1) rotate(-3deg)} 33%{transform:scale(1.12) rotate(3deg)} 66%{transform:scale(0.93) rotate(-2deg)} }
+
+.anim-slide  .icon-inner { animation: mgr-slide  1.8s ease-in-out infinite; }
+.anim-blink  .icon-inner { animation: mgr-blink  1.2s step-end infinite; }
+.anim-snip   .icon-inner { animation: mgr-snip   0.9s ease-in-out infinite; }
+.anim-bounce .icon-inner { animation: mgr-bounce 1.4s ease-in-out infinite; }
+.anim-swing  .icon-inner { animation: mgr-swing  1.6s ease-in-out infinite; }
+.anim-pulse  .icon-inner { animation: mgr-pulse  1.3s ease-in-out infinite; }
+.anim-bob    .icon-inner { animation: mgr-bob    1.7s ease-in-out infinite; }
+.anim-spin   .icon-inner { animation: mgr-spin   2.5s linear infinite; }
+.anim-fire   .icon-inner { animation: mgr-fire   0.7s ease-in-out infinite; }
+
+/* paused when not hired and not affordable */
+.staff-card.locked-staff .icon-inner,
+.staff-card:not(.hired):not(.affordable) .icon-inner { animation-play-state: paused; }
+
+.staff-card-info { flex: 1; min-width: 0; }
+.staff-card-name { font-family: 'Bebas Neue', sans-serif; font-size: 16px; color: var(--text); letter-spacing: 1px; }
+.staff-card-role { font-size: 9px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin-top: 1px; }
+.staff-card-desc { font-size: 10px; color: var(--muted); padding: 0 14px 10px; line-height: 1.5; }
+.staff-card-footer { padding: 8px 14px 12px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.staff-hired-badge { font-size: 10px; color: var(--green); display: flex; align-items: center; gap: 5px; }
+.staff-hired-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); animation: pulse-dot 1.5s infinite; }
+.staff-hire-btn { padding: 6px 14px; font-family: 'DM Mono', monospace; font-size: 9px; border-radius: 4px; cursor: pointer; letter-spacing: 1px; text-transform: uppercase; border: 1px solid var(--gold); background: transparent; color: var(--gold); transition: all 0.15s; white-space: nowrap; }
+.staff-hire-btn:hover:not(:disabled) { background: var(--gold); color: #000; }
+.staff-hire-btn:disabled { border-color: var(--border2); color: var(--muted); cursor: not-allowed; }
+.staff-lock-reason { font-size: 9px; color: var(--muted); font-style: italic; }
+.staff-cost { font-size: 10px; color: var(--muted); }
+.staff-cost.can { color: var(--gold); }
+
+/* ── PRESTIGE SPEND MODAL ── */
+#prestige-modal { position:fixed; inset:0; background:#000d; z-index:500; display:none; align-items:flex-start; justify-content:center; overflow-y:auto; padding:20px 12px 40px; }
+#prestige-modal.open { display:flex; }
+#prestige-modal-panel { background:var(--bg2); border:1px solid #5a2a9a; border-radius:12px; width:700px; max-width:96vw; padding:0 0 20px; }
+#pmod-header { background:linear-gradient(135deg,#130e1f,#0e0e18); border-bottom:1px solid #3a1a6a; border-radius:12px 12px 0 0; padding:16px 20px 12px; display:flex; justify-content:space-between; align-items:flex-start; }
+#pmod-title { font-family:'Bebas Neue',sans-serif; font-size:26px; color:var(--purple); letter-spacing:3px; }
+#pmod-sub { font-size:9px; color:var(--muted); letter-spacing:1px; margin-top:2px; }
+#pmod-cp-box { text-align:right; }
+#pmod-cp-earned { font-size:11px; color:var(--gold); margin-bottom:3px; }
+#pmod-cp-total { font-size:22px; color:var(--gold); font-weight:500; }
+#pmod-cp-label { font-size:8px; color:var(--muted); text-transform:uppercase; letter-spacing:1px; }
+#pmod-body { padding:16px 20px 8px; }
+#pmod-notice { font-size:10px; color:var(--muted); line-height:1.6; background:var(--bg3); border:1px solid var(--border); border-radius:5px; padding:8px 12px; margin-bottom:14px; }
+#pmod-notice strong { color:var(--gold); }
+#pmod-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:14px; }
+@media(max-width:600px){ #pmod-grid{grid-template-columns:1fr;} }
+#pmod-footer { padding:0 20px; display:flex; gap:10px; }
+.pmod-btn { flex:1; padding:10px; font-family:'DM Mono',monospace; font-size:11px; border-radius:6px; cursor:pointer; letter-spacing:1px; text-transform:uppercase; transition:all 0.15s; }
+.pmod-btn-confirm { border:1px solid var(--green); background:transparent; color:var(--green); }
+.pmod-btn-confirm:hover { background:var(--green); color:#000; }
+.pmod-btn-cancel  { border:1px solid var(--border2); background:transparent; color:var(--muted); }
+.pmod-btn-cancel:hover  { background:var(--border2); color:var(--text); }
+/* pu-card inside modal inherits existing .pu-card styles */
 
 /* ── FOOD STALL ── */
 #stall-wrap { padding: 2px; }
@@ -551,16 +620,10 @@ body { font-family: 'DM Mono', monospace; background: var(--bg); color: var(--te
       <div class="section-title">Prestige</div>
       <div id="prestige-card">
         <h3>GO VIRAL</h3>
-        <p id="prestige-desc">Reach 100,000 subscribers to unlock prestige. Reset progress, keep upgrades, gain permanent bonuses.</p>
+        <p id="prestige-desc">Reach 100,000 subscribers to go viral. Threshold grows each prestige.</p>
         <button id="go-viral-btn" onclick="showPrestigeConfirm()" disabled>✦ GO VIRAL ✦</button>
         <div class="clout-preview" id="clout-preview" style="display:none"></div>
-        <div id="prestige-confirm-zone">
-          <p>Reset level, money, subs &amp; views. Keep all upgrades &amp; gain +25% permanent bonus to everything.</p>
-          <div class="prestige-btns">
-            <button class="pbtn pbtn-yes" onclick="doPrestige()">Yes, go viral!</button>
-            <button class="pbtn pbtn-no" onclick="hidePrestigeConfirm()">Not yet</button>
-          </div>
-        </div>
+
       </div>
     </div>
 
@@ -579,15 +642,47 @@ body { font-family: 'DM Mono', monospace; background: var(--bg); color: var(--te
       <button class="tab-btn" onclick="switchTab('stall')">Stall</button>
       <button class="tab-btn" onclick="switchTab('upgrades')">Upgrades</button>
       <button class="tab-btn" onclick="switchTab('milestones')">Milestones</button>
+      <button class="tab-btn" onclick="switchTab('staff')">Staff</button>
       <button class="tab-btn" onclick="switchTab('prestige')">Prestige</button>
     </div>
     <div id="tab-actions"><div id="action-list"></div></div>
     <div id="tab-upgrades" style="display:none"><div class="upgrade-grid" id="upgrade-list"></div></div>
     <div id="tab-stall" style="display:none"><div id="stall-wrap"></div></div>
     <div id="tab-milestones" style="display:none"><div id="milestone-list"></div></div>
+    <div id="tab-staff" style="display:none"><div id="staff-wrap" style="padding:4px"></div></div>
     <div id="tab-prestige" style="display:none"><div id="prestige-shop-wrap"></div></div>
   </div>
 </div>
+
+<!-- PRESTIGE SPEND MODAL -->
+<div id="prestige-modal">
+  <div id="prestige-modal-panel">
+    <div id="pmod-header">
+      <div>
+        <div id="pmod-title">★ WENT VIRAL!</div>
+        <div id="pmod-sub">SPEND YOUR CLOUT POINTS BEFORE THE NEW RUN STARTS</div>
+      </div>
+      <div id="pmod-cp-box">
+        <div id="pmod-cp-earned"></div>
+        <div id="pmod-cp-total"></div>
+        <div id="pmod-cp-label">Clout Points Available</div>
+      </div>
+    </div>
+    <div id="pmod-body">
+      <div id="pmod-notice">
+        <strong>Spend now or save for later.</strong> Any unspent CP carries into the next prestige.
+        Purchased upgrades are <strong>permanent</strong> and take effect immediately in the new run.
+        You can cancel to keep playing this run — your CP has already been added.
+      </div>
+      <div id="pmod-grid"></div>
+    </div>
+    <div id="pmod-footer">
+      <button class="pmod-btn pmod-btn-cancel" onclick="cancelPrestigeModal()">← Keep Playing</button>
+      <button class="pmod-btn pmod-btn-confirm" onclick="confirmPrestige()">Start New Run →</button>
+    </div>
+  </div>
+</div>
+
 
 <script>
 // ════════════════════════════════════════════════
@@ -840,15 +935,6 @@ const PRESTIGE_UPGRADES = [
     ]
   },
   {
-    id:'pu_start_level', name:'Chef Prodigy', icon:'👨‍🍳',
-    desc:'Begin each run at a higher Chef Level.',
-    tiers:[
-      {cost:25,  effect:'Start at Level 2'},
-      {cost:80,  effect:'Start at Level 3'},
-      {cost:200, effect:'Start at Level 5'},
-    ]
-  },
-  {
     id:'pu_speed', name:'Muscle Memory', icon:'⚡',
     desc:'Permanent ×1.15 action speed per tier.',
     tiers:[
@@ -905,6 +991,15 @@ const PRESTIGE_UPGRADES = [
     ]
   },
   {
+    id:'pu_start_level', name:'Chef Prodigy', icon:'👨‍🍳',
+    desc:'Begin each run at a higher Chef Level.',
+    tiers:[
+      {cost:25,  effect:'Start at Level 2'},
+      {cost:80,  effect:'Start at Level 3'},
+      {cost:200, effect:'Start at Level 5'},
+    ]
+  },
+  {
     id:'pu_stall_unlock', name:'Food Truck Veteran', icon:'🚚',
     desc:'Unlock the food stall after fewer cooks.',
     tiers:[
@@ -939,7 +1034,7 @@ const PRESTIGE_UPGRADES = [
       {cost:50,  effect:'Managers 36% cheaper'},
       {cost:140, effect:'Managers 49% cheaper'},
     ]
-  },
+  }
 ];
 const TITLES = [
   [1,'Aspiring Cook'],[2,'Home Chef'],[3,'Recipe Tester'],[4,'Content Creator'],
@@ -1121,7 +1216,29 @@ function insertUnlockedActionCard(action){
   tmp.innerHTML = buildActionCard(action, false);
   const card = tmp.firstElementChild;
   col.appendChild(card);
+  // Refresh staff tab so newly-unlocked manager becomes hirable
+  if(currentTab==='staff') renderStaffTab();
+  else updateStaffButtons();
 }
+
+// Viral threshold grows 25% per prestige — rewards efficient runs while
+// giving prestige upgrades time to matter before the next go-viral
+function getViralThreshold(){
+  return Math.floor(100000 * Math.pow(1.25, G.prestiges));
+}
+
+// Manager metadata: icon animation class + short role description
+const MANAGER_META = {
+  buy_groceries: { animClass:'anim-slide',  animIcon:'🛵', role:'Restocks pantry automatically' },
+  film_clip:     { animClass:'anim-blink',  animIcon:'📹', role:'Keeps the camera rolling' },
+  edit_video:    { animClass:'anim-snip',   animIcon:'✂️', role:'Edits footage on loop' },
+  promote:       { animClass:'anim-bounce', animIcon:'📲', role:'Runs social media non-stop' },
+  thumbnail:     { animClass:'anim-swing',  animIcon:'🎨', role:'Designs thumbnails continuously' },
+  collab:        { animClass:'anim-pulse',  animIcon:'🤝', role:'Books collabs while you cook' },
+  sponsorship:   { animClass:'anim-bob',    animIcon:'💼', role:'Pitches brands on your behalf' },
+  merch:         { animClass:'anim-spin',   animIcon:'👕', role:'Runs the merch store 24/7' },
+  viral_video:   { animClass:'anim-fire',   animIcon:'🔥', role:'Chases virality around the clock' },
+};
 
 // ════════════════════════════════════════════════
 //  UNLOCK CHECKS
@@ -1301,10 +1418,11 @@ function checkUnlocks(){
   // Lightweight updates only — full rebuilds happen on tab switch / buy / prestige
   updateUpgradeGlow();
   if(currentTab==='prestige') updatePrestigePreview();
+  if(currentTab==='staff') updateStaffButtons();
   // Sidebar clout preview
   const _cpEl = document.getElementById('clout-preview');
   if(_cpEl){
-    _cpEl.style.display = G.subs >= 50000 ? 'block' : 'none';
+    _cpEl.style.display = G.subs >= getViralThreshold() * 0.4 ? 'block' : 'none';
     _cpEl.textContent = 'Going viral now: ~' + calcCloutEarned() + ' CP';
   }
 }
@@ -1386,19 +1504,116 @@ function reapplyUpgrades(){
 //  PRESTIGE
 // ════════════════════════════════════════════════
 
-function showPrestigeConfirm(){ document.getElementById('prestige-confirm-zone').style.display='block'; }
-function hidePrestigeConfirm(){ document.getElementById('prestige-confirm-zone').style.display='none'; }
+// ════════════════════════════════════════════════
+//  PRESTIGE SPEND MODAL
+// ════════════════════════════════════════════════
 
-function doPrestige(){
-  hidePrestigeConfirm();
-  const cloutEarned = calcCloutEarned();
-  const prev = G.prestiges + 1;
-  // Carry forward only prestige-persistent state
+let _pmodCloutSnapshot = 0;   // G.cloutPoints before modal opened
+let _pmodPUSnapshot    = {};   // G.prestigeUpgrades before modal opened
+let _pmodPrestiges     = 0;    // prestige count for the new run
+let _pmodCloutEarned   = 0;    // CP earned this run
+
+function showPrestigeConfirm(){
+  // Snapshot state so Cancel can fully revert
+  _pmodCloutSnapshot = G.cloutPoints;
+  _pmodPUSnapshot    = JSON.parse(JSON.stringify(G.prestigeUpgrades));
+  _pmodCloutEarned   = calcCloutEarned();
+  _pmodPrestiges     = G.prestiges + 1;
+
+  // Credit earned CP now so the shop shows the real available balance
+  G.cloutPoints      += _pmodCloutEarned;
+  G.totalCloutEarned  = (G.totalCloutEarned || 0) + _pmodCloutEarned;
+
+  renderPrestigeModal();
+  document.getElementById('prestige-modal').classList.add('open');
+}
+
+function hidePrestigeConfirm(){ /* kept for compat — no-op */ }
+
+function renderPrestigeModal(){
+  // Header CP breakdown
+  document.getElementById('pmod-cp-earned').textContent =
+    'This run: +' + _pmodCloutEarned + ' CP · Previously: ' + _pmodCloutSnapshot + ' CP';
+  document.getElementById('pmod-cp-total').textContent = G.cloutPoints + ' CP';
+
+  // Build upgrade cards into the modal grid
+  const grid = document.getElementById('pmod-grid');
+  if(!grid) return;
+  const clout = G.cloutPoints;
+
+  grid.innerHTML = PRESTIGE_UPGRADES.map(pu => {
+    const tier = getPrestigeTier(pu.id);
+    const maxTier  = pu.tiers.length - 1;
+    const isMaxed  = tier >= maxTier;
+    const nextTier = tier + 1;
+    const nextCost = !isMaxed ? pu.tiers[nextTier].cost : 0;
+    const canAfford = !isMaxed && clout >= nextCost;
+
+    let cls = 'pu-card';
+    if(isMaxed)    cls += ' pu-maxed';
+    else if(canAfford) cls += ' pu-affordable';
+
+    const pips = pu.tiers.map((_,i) =>
+      `<div class="pu-pip${i <= tier ? ' on' : ''}"></div>`
+    ).join('');
+
+    const effectLine = tier >= 0
+      ? `<div class="pu-effect">▶ ${pu.tiers[tier].effect}</div>`
+      : `<div class="pu-effect" style="color:var(--muted)">Not yet purchased</div>`;
+
+    const btn = isMaxed
+      ? `<button class="pu-btn pu-maxed-btn" disabled>✓ Maxed</button>`
+      : `<button class="pu-btn" onclick="buyPrestigeUpgradeModal('${pu.id}')" ${canAfford?'':'disabled'}>
+           ${canAfford ? '▲ Upgrade' : '🔒'} — ${nextCost} CP
+         </button>`;
+
+    return `<div class="${cls}" id="pmod-card-${pu.id}">
+      <div class="pu-card-top">
+        <div class="pu-icon">${pu.icon}</div>
+        <div>
+          <div class="pu-name">${pu.name}</div>
+          <div class="pu-tier-label">${tier < 0 ? 'LOCKED' : 'TIER ' + (tier+1) + ' / ' + pu.tiers.length}</div>
+        </div>
+      </div>
+      <div class="pu-desc">${pu.desc}</div>
+      <div class="pu-pips">${pips}</div>
+      ${effectLine}
+      ${btn}
+    </div>`;
+  }).join('');
+}
+
+function buyPrestigeUpgradeModal(id){
+  const pu = PRESTIGE_UPGRADES.find(p => p.id === id);
+  if(!pu) return;
+  const currentTier = getPrestigeTier(id);
+  const nextTier = currentTier + 1;
+  if(nextTier >= pu.tiers.length) return;
+  const cost = pu.tiers[nextTier].cost;
+  if(G.cloutPoints < cost) return;
+  G.cloutPoints -= cost;
+  G.prestigeUpgrades[id] = nextTier;
+  SFX.upgrade();
+  // Re-render the modal with updated balances
+  renderPrestigeModal();
+}
+
+function cancelPrestigeModal(){
+  // Revert all purchases made in this session
+  G.cloutPoints      = _pmodCloutSnapshot + _pmodCloutEarned; // keep earned CP
+  G.prestigeUpgrades = _pmodPUSnapshot;
+  G.totalCloutEarned = (G.totalCloutEarned || 0); // already added, keep it
+  document.getElementById('prestige-modal').classList.remove('open');
+}
+
+function confirmPrestige(){
+  document.getElementById('prestige-modal').classList.remove('open');
+
+  const prev          = _pmodPrestiges;
   const keepPU        = {...G.prestigeUpgrades};
-  const keepClout     = G.cloutPoints + cloutEarned;
-  const keepTotalClout= (G.totalCloutEarned || 0) + cloutEarned;
+  const keepClout     = G.cloutPoints;
+  const keepTotalClout= G.totalCloutEarned || 0;
 
-  // Full reset — no upgrades, no managers, no milestones
   G = DEFAULT_G();
   G.prestiges        = prev;
   G.prestigeUpgrades = keepPU;
@@ -1407,22 +1622,22 @@ function doPrestige(){
   G.activeCookId     = null;
   G.stallWasUnlocked = false;
 
-  // Apply prestige starting bonuses (money, subs, level)
   applyPrestigeStartBonuses();
-  // Apply prestige multipliers on fresh mx
   applyPrestigeMultipliers();
 
   prevUnlockedActions  = new Set();
   prevUnlockedUpgrades = new Set();
 
   SFX.viral();
-  notify('★★★ WENT VIRAL! +' + cloutEarned + ' Clout Points earned!', '');
-  addLog('★★★ Prestige #' + prev + ' — earned ' + cloutEarned + ' Clout Points. Fresh start!', 'great');
+  notify('★★★ WENT VIRAL! Prestige #' + prev + ' — new run started!', '');
   updateTitle();
   renderAll();
   renderPrestigeShop();
   updateStats();
 }
+
+// Keep old doPrestige name pointing to confirmPrestige for safety
+function doPrestige(){ confirmPrestige(); }
 
 // ════════════════════════════════════════════════
 //  RENDERING
@@ -1445,20 +1660,16 @@ function renderActions(){
   const el = document.getElementById('action-list');
 
   const unlockedCooks   = ACTIONS.filter(a=>COOK_IDS.includes(a.id) && isActionUnlocked(a));
-  const lockedCooks     = ACTIONS.filter(a=>COOK_IDS.includes(a.id) && !isActionUnlocked(a)).slice(0,2);
   const unlockedContent = ACTIONS.filter(a=>!COOK_IDS.includes(a.id) && isActionUnlocked(a));
-  const lockedContent   = ACTIONS.filter(a=>!COOK_IDS.includes(a.id) && !isActionUnlocked(a)).slice(0,2);
 
   const activeName = G.activeCookId ? ACTIONS.find(a=>a.id===G.activeCookId)?.name : null;
   const autoLabel  = activeName ? `<span class="auto-cook-indicator">⚙ ${activeName}</span>` : '';
 
   let kitchenHtml = '';
   unlockedCooks.forEach(a=>{ kitchenHtml += buildActionCard(a, false); });
-  lockedCooks.forEach(a  =>{ kitchenHtml += buildActionCard(a, true); });
 
   let contentHtml = '';
   unlockedContent.forEach(a=>{ contentHtml += buildActionCard(a, false); });
-  lockedContent.forEach(a  =>{ contentHtml += buildActionCard(a, true); });
 
   el.innerHTML = `<div class="actions-columns">
     <div class="actions-col" id="kitchen-col">
@@ -1478,7 +1689,7 @@ function renderActions(){
 
 function buildActionCard(a, isLocked){
   const running = G.actionTimers[a.id] && G.actionTimers[a.id].running;
-  const hasManager = COOK_IDS.includes(a.id) ? G.activeCookId === a.id : G.managers.includes(a.id);
+  const hasManager = COOK_IDS.includes(a.id) ? (G.activeCookId === a.id) : G.managers.includes(a.id);
   const duration = getActionDuration(a);
   const durSec = (duration/1000).toFixed(1)+'s';
   const color = a.color || 'green';
@@ -1498,35 +1709,26 @@ function buildActionCard(a, isLocked){
 
   const isCookAction = COOK_IDS.includes(a.id);
   let mgrSection = '';
-  if(!isLocked){
-    if(isCookAction){
-      const hasAutoStation = G.ownedUpgrades.includes('ug_autocook');
-      if(hasAutoStation){
-        const isActive = G.activeCookId === a.id;
-        const stockFull = G.mealQueue && G.mealQueue.length >= MAX_MEAL_STOCK;
-        mgrSection = `<div class="manager-row">
-          <button class="mgr-btn${isActive ? ' mgr-active' : ''}" onclick="event.stopPropagation();setActiveCook('${a.id}')">
-            ${isActive ? (stockFull ? '⏸ Paused — stock full' : '■ Auto-Cook Active — click to stop') : '▶ Set as Auto-Cook'}
-          </button>
-        </div>`;
-      } else {
-        const u = UPGRADES_DEF.find(u=>u.id==='ug_autocook');
-        const meetsLevel = G.level >= 3;
-        const meetsCooks = G.totalCooks >= 25;
-        const reason = !meetsLevel ? 'Requires Level 3' : !meetsCooks ? `Cook ${25-G.totalCooks} more meals` : 'Buy Auto-Cook Station in Upgrades';
-        mgrSection = `<div class="manager-row"><span class="mgr-locked-hint">🔒 Automation locked — ${reason}</span></div>`;
-      }
-    } else if(a.managerCost){
-      const isHired = G.managers.includes(a.id);
-      if(isHired){
-        mgrSection = `<div class="manager-row"><span class="mgr-hired">✓ ${a.managerName} on duty — auto-running</span></div>`;
-      } else {
-        const _disc=getPrestigeTier('pu_manager_disc');
-        const _mult=_disc>=0?Math.pow(0.8,_disc+1):1;
-        const _cost=Math.floor(a.managerCost*_mult);
-        mgrSection = `<div class="manager-row"><button class="mgr-btn${G.money>=_cost?' affordable':''}" onclick="event.stopPropagation();buyManager('${a.id}')" ${G.money<_cost?'disabled':''}>Hire ${a.managerName} — ${fmtMoney(_cost)}</button></div>`;
-      }
+  if(!isLocked && isCookAction){
+    const hasAutoStation = G.ownedUpgrades.includes('ug_autocook');
+    if(hasAutoStation){
+      const isActive = G.activeCookId === a.id;
+      const stockFull = G.mealQueue && G.mealQueue.length >= MAX_MEAL_STOCK;
+      mgrSection = `<div class="manager-row">
+        <button class="mgr-btn${isActive ? ' mgr-active' : ''}" onclick="event.stopPropagation();setActiveCook('${a.id}')">
+          ${isActive ? (stockFull ? '⏸ Paused — stock full' : '■ Auto-Cook Active — click to stop') : '▶ Set as Auto-Cook'}
+        </button>
+      </div>`;
+    } else {
+      const meetsLevel = G.level >= 3;
+      const meetsCooks = G.totalCooks >= 25;
+      const reason = !meetsLevel ? 'Requires Level 3' : !meetsCooks ? `Cook ${25-G.totalCooks} more meals` : 'Buy Auto-Cook Station in Upgrades';
+      mgrSection = `<div class="manager-row"><span class="mgr-locked-hint">🔒 Automation locked — ${reason}</span></div>`;
     }
+  }
+  // Non-cook managers → handled by Staff tab; show hired badge inline only
+  if(!isLocked && !isCookAction && a.managerCost && G.managers.includes(a.id)){
+    mgrSection = `<div class="manager-row"><span class="mgr-hired">✓ ${a.managerName} on duty</span></div>`;
   }
 
   return `<div class="action-card${isLocked?' locked':''}" id="ac-${a.id}">
@@ -1652,6 +1854,95 @@ function renderMilestones(){
   }).join('');
 }
 
+function renderStaffTab(){
+  const el = document.getElementById('staff-wrap');
+  if(!el) return;
+
+  const disc = getPrestigeTier('pu_manager_disc');
+  const discMult = disc >= 0 ? Math.pow(0.8, disc + 1) : 1;
+
+  // All actions that have a manager
+  const managerActions = ACTIONS.filter(a => a.managerCost && !COOK_IDS.includes(a.id));
+
+  let html = `<div style="font-size:10px;color:var(--muted);margin-bottom:10px;line-height:1.6;border-left:2px solid var(--border2);padding-left:8px;">
+    Hire staff to automate Content &amp; Business actions forever.<br>
+    Staff unlock when their action unlocks. Auto-Cook is managed from the Actions tab.
+  </div><div class="staff-grid">`;
+
+  managerActions.forEach(a => {
+    const meta      = MANAGER_META[a.id] || { animClass:'anim-pulse', animIcon:'🧑', role:'Handles this action' };
+    const isHired   = G.managers.includes(a.id);
+    const unlocked  = isActionUnlocked(a);
+    const cost      = Math.floor(a.managerCost * discMult);
+    const canAfford = G.money >= cost;
+
+    let cls = 'staff-card';
+    if(isHired)        cls += ' hired';
+    else if(!unlocked) cls += ' locked-staff';
+    else if(canAfford) cls += ' affordable';
+
+    // Lock reason
+    let lockReason = '';
+    if(!unlocked){
+      const u = a.unlockAt;
+      const parts = [];
+      if(u.level  && G.level      < u.level)      parts.push('Level ' + u.level);
+      if(u.subs   && G.subs       < u.subs)        parts.push(fmt(u.subs) + ' subs');
+      if(u.totalCooks  && G.totalCooks  < u.totalCooks)  parts.push(u.totalCooks + ' cooks');
+      if(u.totalFilmed && G.totalFilmed < u.totalFilmed) parts.push(u.totalFilmed + ' videos');
+      if(u.totalEdits  && G.totalEdits  < u.totalEdits)  parts.push(u.totalEdits + ' edits');
+      lockReason = 'Unlock: ' + parts.join(' + ');
+    }
+
+    const footer = isHired
+      ? `<div class="staff-hired-badge"><div class="staff-hired-dot"></div>On duty — auto-running</div>`
+      : unlocked
+        ? `<span class="staff-cost${canAfford ? ' can' : ''}">${fmtMoney(cost)}</span>
+           <button class="staff-hire-btn" onclick="buyManager('${a.id}')" ${canAfford?'':'disabled'}>
+             Hire
+           </button>`
+        : `<span class="staff-lock-reason">${lockReason}</span>`;
+
+    html += `<div class="staff-card ${cls}" id="staff-card-${a.id}">
+      <div class="staff-card-top">
+        <div class="staff-anim-icon ${meta.animClass}">
+          <span class="icon-inner">${meta.animIcon}</span>
+        </div>
+        <div class="staff-card-info">
+          <div class="staff-card-name">${a.managerName}</div>
+          <div class="staff-card-role">${meta.role}</div>
+        </div>
+      </div>
+      <div class="staff-card-desc">Automates <strong style="color:var(--text)">${a.name}</strong> — ${a.desc}</div>
+      <div class="staff-card-footer">${footer}</div>
+    </div>`;
+  });
+
+  html += '</div>';
+  el.innerHTML = html;
+}
+
+// Lightweight staff affordability refresh (no full rebuild)
+function updateStaffButtons(){
+  const disc     = getPrestigeTier('pu_manager_disc');
+  const discMult = disc >= 0 ? Math.pow(0.8, disc + 1) : 1;
+  ACTIONS.filter(a => a.managerCost && !COOK_IDS.includes(a.id)).forEach(a => {
+    const card = document.getElementById('staff-card-' + a.id);
+    if(!card) return;
+    const isHired  = G.managers.includes(a.id);
+    const unlocked = isActionUnlocked(a);
+    const cost     = Math.floor(a.managerCost * discMult);
+    const canAfford = G.money >= cost;
+    // Update class
+    card.className = 'staff-card' + (isHired ? ' hired' : !unlocked ? ' locked-staff' : canAfford ? ' affordable' : '');
+    // Update button state only
+    const btn = card.querySelector('.staff-hire-btn');
+    if(btn) btn.disabled = !canAfford;
+    const costEl = card.querySelector('.staff-cost');
+    if(costEl) costEl.className = 'staff-cost' + (canAfford ? ' can' : '');
+  });
+}
+
 function renderPrestigeShop(){
   const el = document.getElementById('prestige-shop-wrap');
   if(!el) return;
@@ -1752,6 +2043,7 @@ function renderAll(){
   renderUpgrades();
   renderMilestones();
   renderPrestigeShop();
+  if(currentTab==='staff') renderStaffTab();
 }
 
 // ════════════════════════════════════════════════
@@ -1818,10 +2110,11 @@ function updateStats(){
   document.getElementById('sc-views').textContent = fmt(G.views);
   // Income display — driven by the dedicated EMA interval above
   document.getElementById('st-income').textContent = '$'+smoothedIncome.toFixed(2)+'/s';
-  document.getElementById('go-viral-btn').disabled = G.subs < 100000;
-  document.getElementById('prestige-desc').textContent = G.subs>=100000
+  document.getElementById('go-viral-btn').disabled = G.subs < getViralThreshold();
+  const _vt = getViralThreshold();
+  document.getElementById('prestige-desc').textContent = G.subs >= _vt
     ? '★ Ready to Go Viral! You\'ve earned it.'
-    : 'Reach 100,000 subscribers to unlock prestige. Currently: '+fmt(G.subs)+'/100K';
+    : 'Reach ' + fmt(_vt) + ' subscribers to go viral. Currently: ' + fmt(G.subs) + ' / ' + fmt(_vt);
   if(currentTab==='upgrades') renderUpgrades();
 }
 
@@ -2123,15 +2416,16 @@ function notify(msg, cls=''){
 
 function switchTab(tab){
   currentTab = tab;
-  ['actions','stall','upgrades','milestones','prestige'].forEach(t=>{
+  ['actions','stall','upgrades','milestones','staff','prestige'].forEach(t=>{
     document.getElementById('tab-'+t).style.display = t===tab?'block':'none';
   });
   document.querySelectorAll('.tab-btn').forEach((b,i)=>{
-    b.classList.toggle('active', ['actions','stall','upgrades','milestones','prestige'][i]===tab);
+    b.classList.toggle('active', ['actions','stall','upgrades','milestones','staff','prestige'][i]===tab);
   });
   if(tab==='upgrades') renderUpgrades();
   if(tab==='milestones') renderMilestones();
   if(tab==='stall') renderStall();
+  if(tab==='staff') renderStaffTab();
   if(tab==='prestige') renderPrestigeShop();
 }
 
