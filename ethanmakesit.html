@@ -1,0 +1,2388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ethan Makes It</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0e0e12;
+  --bg2: #15151c;
+  --bg3: #1c1c26;
+  --border: #2a2a38;
+  --border2: #3a3a50;
+  --gold: #f5c842;
+  --gold2: #e0a800;
+  --red: #e05252;
+  --green: #52c07a;
+  --blue: #52a8e0;
+  --purple: #a06ee0;
+  --text: #e8e8f0;
+  --muted: #7070a0;
+  --panel: #13131a;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'DM Mono', monospace; background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
+
+/* ── HEADER ── */
+#header { background: var(--panel); border-bottom: 1px solid var(--border); padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; }
+#header h1 { font-family: 'Bebas Neue', sans-serif; font-size: 26px; color: var(--gold); letter-spacing: 3px; line-height: 1; }
+#header-sub { font-size: 9px; color: var(--muted); letter-spacing: 1px; margin-top: 1px; }
+#title-rank { font-size: 10px; color: var(--purple); letter-spacing: 1px; }
+#header-stats { display: flex; gap: 16px; }
+.hstat { text-align: right; }
+.hstat-val { font-size: 16px; font-weight: 500; color: var(--gold); }
+.hstat-label { font-size: 8px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+.hstat-val.blue { color: var(--blue); }
+.hstat-val.green { color: var(--green); }
+
+/* ── LAYOUT ── */
+#layout { display: grid; grid-template-columns: 260px 1fr; min-height: calc(100vh - 53px); }
+#sidebar { background: var(--panel); border-right: 1px solid var(--border); padding: 12px; overflow-y: auto; }
+#main { padding: 12px; overflow-y: auto; }
+
+/* ── SCENE ── */
+#scene-wrap { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; margin-bottom: 12px; height: 160px; position: relative; }
+#scene { width: 100%; height: 100%; }
+
+/* ── SIDEBAR STATS ── */
+.section-title { font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 2px; margin: 12px 0 6px; padding-bottom: 4px; border-bottom: 1px solid var(--border); }
+.section-title:first-child { margin-top: 0; }
+.stat-row { display: flex; justify-content: space-between; align-items: center; padding: 3px 0; font-size: 11px; }
+.stat-row .skey { color: var(--muted); }
+.stat-row .sval { color: var(--text); font-weight: 500; }
+.stat-row .sval.gold { color: var(--gold); }
+.stat-row .sval.green { color: var(--green); }
+.stat-row .sval.blue { color: var(--blue); }
+.stat-row .sval.purple { color: var(--purple); }
+
+/* ── XP BAR ── */
+.bar-row { margin: 4px 0; }
+.bar-label-row { display: flex; justify-content: space-between; font-size: 9px; color: var(--muted); margin-bottom: 2px; }
+.bar-track { background: var(--bg3); border-radius: 3px; height: 5px; overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 3px; transition: width 0.5s ease; }
+.bar-fill.xp { background: var(--purple); }
+.bar-fill.hype { background: var(--red); }
+
+/* ── ACTIONS (Adventure Capitalist style) ── */
+.action-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 8px; overflow: hidden; transition: border-color 0.2s; position: relative; }
+.action-card.locked { opacity: 0.45; filter: grayscale(0.6); }
+.action-card.unlocking { border-color: var(--gold); animation: pulse-border 1s ease; }
+@keyframes pulse-border { 0%,100%{border-color:var(--border)} 50%{border-color:var(--gold)} }
+
+.action-top { display: flex; align-items: center; gap: 0; cursor: pointer; }
+.action-top:hover .action-btn-area { background: #1e2030; }
+
+.action-icon { width: 54px; height: 54px; display: flex; align-items: center; justify-content: center; font-size: 22px; background: var(--bg3); border-right: 1px solid var(--border); flex-shrink: 0; }
+.action-info { flex: 1; padding: 8px 10px; }
+.action-name { font-size: 13px; font-weight: 500; color: var(--text); font-family: 'Bebas Neue', sans-serif; letter-spacing: 1px; font-size: 15px; }
+.action-desc { font-size: 9px; color: var(--muted); margin-top: 1px; }
+.action-earn { font-size: 10px; color: var(--green); margin-top: 2px; }
+.action-btn-area { width: 80px; height: 54px; display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--bg3); border-left: 1px solid var(--border); cursor: pointer; transition: background 0.15s; flex-shrink: 0; }
+.action-btn-area:active { background: #252540; transform: scale(0.97); }
+.action-btn-label { font-size: 9px; color: var(--muted); }
+.action-btn-time { font-size: 12px; font-weight: 500; color: var(--gold); font-family: 'Bebas Neue', sans-serif; letter-spacing: 1px; }
+.action-btn-area.running { background: #1a1a30; }
+.action-btn-area.running .action-btn-label { color: var(--green); }
+
+/* PROGRESS BAR under action */
+.action-progress { height: 4px; background: var(--bg3); position: relative; }
+.action-progress-fill { height: 100%; background: var(--gold); width: 0%; transition: width 0.1s linear; border-radius: 0 2px 2px 0; }
+.action-progress-fill.green { background: var(--green); }
+.action-progress-fill.blue { background: var(--blue); }
+
+/* Manager dot */
+.manager-dot { position: absolute; top: 6px; right: 6px; width: 8px; height: 8px; border-radius: 50%; background: var(--green); display: none; }
+.has-manager .manager-dot { display: block; animation: pulse-dot 1.5s infinite; }
+@keyframes pulse-dot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.8)} }
+
+/* Locked overlay */
+.lock-overlay { position: absolute; inset: 0; background: #0008; display: flex; align-items: center; justify-content: center; font-size: 10px; color: var(--muted); letter-spacing: 1px; pointer-events: none; }
+
+/* ── UPGRADES PANEL ── */
+#upgrades-section { margin-top: 0; }
+.upgrade-grid { display: flex; flex-direction: column; gap: 6px; }
+.upgrade-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; display: flex; align-items: center; gap: 8px; cursor: pointer; transition: border-color 0.15s, background 0.15s; }
+.upgrade-card:hover:not(.owned):not(.locked-u) { border-color: var(--gold2); background: var(--bg3); }
+.upgrade-card.owned { border-color: #2a4a2a; background: #111a11; }
+.upgrade-card.locked-u { opacity: 0.3; cursor: default; }
+.upgrade-card.affordable { border-color: var(--gold); }
+.upgrade-icon { font-size: 18px; width: 28px; text-align: center; }
+.upgrade-info { flex: 1; }
+.upgrade-name { font-size: 11px; font-weight: 500; color: var(--text); }
+.upgrade-desc { font-size: 9px; color: var(--muted); margin-top: 1px; }
+.upgrade-cost { font-size: 10px; color: var(--gold); text-align: right; white-space: nowrap; }
+.upgrade-card.owned .upgrade-cost { color: var(--green); font-size: 9px; }
+
+/* ── TABS ── */
+#tabs { display: flex; gap: 4px; margin-bottom: 10px; }
+.tab-btn { padding: 6px 14px; font-family: 'DM Mono', monospace; font-size: 10px; border: 1px solid var(--border); border-radius: 4px; background: var(--bg2); color: var(--muted); cursor: pointer; letter-spacing: 1px; text-transform: uppercase; transition: all 0.15s; }
+.tab-btn.active { border-color: var(--gold); color: var(--gold); background: #1a1500; }
+.tab-btn:hover:not(.active) { border-color: var(--border2); color: var(--text); }
+
+/* ── MILESTONES ── */
+.milestone-item { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border: 1px solid var(--border); border-radius: 5px; margin-bottom: 4px; font-size: 10px; background: var(--bg2); }
+.milestone-item.done { border-color: var(--gold); background: #1a1400; color: var(--gold); }
+.milestone-item .ms-check { width: 14px; height: 14px; border-radius: 50%; border: 1px solid var(--border2); display: flex; align-items: center; justify-content: center; font-size: 8px; flex-shrink: 0; }
+.milestone-item.done .ms-check { background: var(--gold); border-color: var(--gold); color: #000; }
+.milestone-item .ms-label { flex: 1; color: var(--muted); }
+.milestone-item.done .ms-label { color: var(--gold); }
+.milestone-item .ms-reward { font-size: 9px; color: var(--green); }
+
+
+/* ── NOTIFICATIONS ── */
+#notif-container { position: fixed; bottom: 16px; right: 16px; z-index: 200; display: flex; flex-direction: column-reverse; gap: 6px; pointer-events: none; }
+.notif { background: var(--bg3); border: 1px solid var(--gold); border-radius: 6px; padding: 8px 14px; font-size: 11px; color: var(--gold); font-family: 'DM Mono', monospace; animation: notifIn 3s forwards; max-width: 260px; }
+.notif.green { border-color: var(--green); color: var(--green); }
+.notif.blue { border-color: var(--blue); color: var(--blue); }
+.notif.purple { border-color: var(--purple); color: var(--purple); }
+@keyframes notifIn { 0%{opacity:0;transform:translateY(10px)} 10%{opacity:1;transform:translateY(0)} 80%{opacity:1} 100%{opacity:0;transform:translateY(-6px)} }
+
+/* ── TUTORIAL OVERLAY ── */
+#tutorial-overlay { position: fixed; inset: 0; background: #000c; z-index: 300; display: flex; align-items: center; justify-content: center; }
+#tutorial-box { background: var(--bg2); border: 1px solid var(--gold); border-radius: 12px; padding: 28px 32px; max-width: 440px; width: 90%; }
+#tutorial-box h2 { font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: var(--gold); letter-spacing: 2px; margin-bottom: 4px; }
+#tutorial-box .tut-sub { font-size: 10px; color: var(--muted); margin-bottom: 16px; letter-spacing: 1px; }
+.tut-step { display: none; }
+.tut-step.active { display: block; }
+.tut-step p { font-size: 12px; color: var(--text); line-height: 1.7; margin-bottom: 10px; }
+.tut-step .tut-tip { background: var(--bg3); border-left: 3px solid var(--gold); padding: 8px 12px; font-size: 11px; color: var(--gold); margin-bottom: 14px; border-radius: 0 4px 4px 0; }
+.tut-btns { display: flex; gap: 8px; margin-top: 4px; }
+.tut-btn { flex: 1; padding: 9px; font-family: 'DM Mono', monospace; font-size: 11px; border-radius: 5px; cursor: pointer; letter-spacing: 1px; border: 1px solid var(--gold); background: transparent; color: var(--gold); transition: all 0.15s; }
+.tut-btn:hover { background: var(--gold); color: #000; }
+.tut-btn.skip { border-color: var(--border2); color: var(--muted); }
+.tut-btn.skip:hover { background: var(--border2); color: var(--text); }
+.tut-dots { display: flex; gap: 4px; margin-bottom: 14px; }
+.tut-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border2); }
+.tut-dot.active { background: var(--gold); }
+
+/* ── PRESTIGE ── */
+#prestige-zone { margin-top: 12px; }
+#prestige-card { background: #1a0808; border: 1px solid #5a1a1a; border-radius: 8px; padding: 12px; }
+#prestige-card h3 { font-family: 'Bebas Neue', sans-serif; font-size: 20px; color: var(--red); letter-spacing: 2px; margin-bottom: 4px; }
+#prestige-card p { font-size: 10px; color: var(--muted); margin-bottom: 10px; line-height: 1.5; }
+#prestige-confirm-zone { display: none; margin-top: 8px; }
+#prestige-confirm-zone p { color: var(--red); margin-bottom: 8px; }
+.prestige-btns { display: flex; gap: 6px; }
+.pbtn { flex: 1; padding: 7px; font-family: 'DM Mono', monospace; font-size: 10px; border-radius: 4px; cursor: pointer; letter-spacing: 1px; }
+.pbtn-yes { background: #5a1a1a; border: 1px solid var(--red); color: var(--red); }
+.pbtn-yes:hover { background: var(--red); color: #fff; }
+.pbtn-no { background: var(--bg3); border: 1px solid var(--border2); color: var(--muted); }
+.pbtn-no:hover { background: var(--border2); color: var(--text); }
+#go-viral-btn { width: 100%; padding: 9px; font-family: 'DM Mono', monospace; font-size: 11px; border-radius: 5px; cursor: pointer; border: 1px solid #5a1a1a; background: #1a0808; color: var(--red); letter-spacing: 1px; transition: all 0.2s; }
+#go-viral-btn:hover:not(:disabled) { background: #5a1a1a; border-color: var(--red); }
+#go-viral-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+/* ── UNLOCK FLASH ── */
+@keyframes unlockFlash { 0%{background:rgba(245,200,66,0.15)} 100%{background:transparent} }
+.just-unlocked { animation: unlockFlash 1.5s ease-out; }
+
+/* ── COMPLETION FLASH ── */
+@keyframes completionFlash { 0%{background:rgba(82,192,122,0.18)} 60%{background:rgba(82,192,122,0.08)} 100%{background:transparent} }
+.action-complete-flash { animation: completionFlash 0.55s ease-out; }
+
+/* ── MANAGER UI ── */
+.manager-row { display: flex; align-items: center; padding: 5px 10px 6px; border-top: 1px solid var(--border); background: var(--panel); }
+.mgr-btn { flex: 1; padding: 7px 10px; font-family: 'DM Mono', monospace; font-size: 9px; border-radius: 3px; cursor: pointer; letter-spacing: 1px; border: 1px solid var(--border2); background: transparent; color: var(--muted); transition: all 0.15s; text-transform: uppercase; }
+.mgr-btn:hover:not(:disabled) { border-color: var(--green); color: var(--green); background: #0a1a0e; }
+.mgr-btn.affordable { border-color: var(--green); color: var(--green); }
+.mgr-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+.mgr-hired { font-size: 9px; color: var(--green); letter-spacing: 1px; }
+.mgr-btn.mgr-active { border-color: var(--green) !important; color: var(--green) !important; background: #0a1a0e !important; }
+.action-section-title { font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 2px; padding: 4px 2px 6px; margin-bottom: 4px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 6px; }
+.action-section-title span { color: var(--border2); }
+.auto-cook-indicator { font-size: 9px; color: var(--green); letter-spacing: 1px; margin-left: auto; }
+.mgr-locked-hint { font-size: 9px; color: var(--muted); letter-spacing: 1px; font-style: italic; }
+
+/* ── ACTIONS TWO-COLUMN ── */
+.actions-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-items: start; }
+.actions-col { min-width: 0; }
+@media (max-width: 900px) { .actions-columns { grid-template-columns: 1fr; } }
+
+/* ── TICKER ── */
+#ticker { font-size: 9px; color: #3a3a50; text-align: center; padding: 6px; letter-spacing: 1px; font-style: italic; }
+
+/* ── SAVE ── */
+#save-info { font-size: 8px; color: #3a3a50; text-align: center; padding: 4px; }
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+/* ── PRESTIGE SHOP ── */
+.prestige-header { background: linear-gradient(135deg,#130e1f,#0e0e18); border:1px solid #5a2a9a; border-radius:8px; padding:12px 16px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center; }
+.prestige-header h3 { font-family:'Bebas Neue',sans-serif; font-size:20px; color:var(--purple); letter-spacing:2px; margin:0; }
+.clout-display { text-align:right; }
+.clout-val { font-size:22px; color:var(--gold); font-weight:500; display:block; }
+.clout-label { font-size:8px; color:var(--muted); text-transform:uppercase; letter-spacing:1px; }
+.clout-preview { font-size:10px; color:var(--gold); margin-top:4px; padding:5px 8px; background:#1a1200; border:1px solid #3a2a00; border-radius:4px; }
+.prestige-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+@media(max-width:680px){ .prestige-grid{grid-template-columns:1fr;} }
+.pu-card { background:var(--bg2); border:1px solid #2e1e4a; border-radius:8px; padding:10px 12px; transition:border-color 0.15s; }
+.pu-card.pu-affordable { border-color:var(--purple); }
+.pu-card.pu-maxed { border-color:#1a3a1a; background:#0c110c; }
+.pu-card-top { display:flex; align-items:center; gap:8px; margin-bottom:4px; }
+.pu-icon { font-size:20px; width:28px; text-align:center; flex-shrink:0; }
+.pu-name { font-family:'Bebas Neue',sans-serif; font-size:14px; color:var(--text); letter-spacing:1px; line-height:1.1; }
+.pu-tier-label { font-size:9px; color:var(--purple); letter-spacing:1px; }
+.pu-desc { font-size:9px; color:var(--muted); margin-bottom:5px; line-height:1.5; }
+.pu-pips { display:flex; gap:3px; margin-bottom:5px; }
+.pu-pip { flex:1; height:3px; border-radius:2px; background:var(--bg3); }
+.pu-pip.on { background:var(--purple); }
+.pu-effect { font-size:10px; color:var(--purple); margin-bottom:6px; min-height:14px; }
+.pu-btn { width:100%; padding:5px 8px; font-family:'DM Mono',monospace; font-size:9px; border-radius:4px; cursor:pointer; letter-spacing:1px; text-transform:uppercase; border:1px solid #5a2a9a; background:transparent; color:var(--purple); transition:all 0.15s; }
+.pu-btn:hover:not(:disabled) { background:var(--purple); color:#fff; }
+.pu-btn:disabled { opacity:0.35; cursor:not-allowed; }
+.pu-btn.pu-maxed-btn { border-color:#1a3a1a; color:var(--green); }
+.prestige-empty { text-align:center; padding:32px 16px; color:var(--muted); font-size:10px; line-height:1.9; }
+.prestige-empty .big { font-size:28px; margin-bottom:8px; }
+
+/* ── FOOD STALL ── */
+#stall-wrap { padding: 2px; }
+.stall-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+.stall-title { font-family: 'Bebas Neue', sans-serif; font-size: 18px; color: var(--gold); letter-spacing: 2px; }
+.stall-stock-badge { font-size: 10px; color: var(--text); }
+.stall-stock-badge span { color: var(--gold); font-weight: 500; }
+.stall-hint { font-size: 9px; color: var(--muted); margin-bottom: 12px; line-height: 1.6; border-left: 2px solid var(--border2); padding-left: 8px; }
+.customer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.customer-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 10px 10px 8px; cursor: pointer; transition: border-color 0.12s, transform 0.1s; position: relative; user-select: none; }
+.customer-card:hover { border-color: var(--gold); background: var(--bg3); }
+.customer-card:active { transform: scale(0.96); }
+.cust-top { display: flex; align-items: center; gap: 7px; margin-bottom: 5px; }
+.cust-emoji { font-size: 22px; line-height: 1; }
+.cust-info { flex: 1; }
+.cust-name { font-size: 11px; color: var(--text); font-weight: 500; }
+.cust-order { font-size: 9px; color: var(--muted); margin-top: 1px; }
+.cust-value { font-size: 11px; color: var(--green); font-weight: 500; text-align: right; margin-bottom: 4px; }
+.cust-timer-track { height: 4px; background: var(--bg3); border-radius: 2px; overflow: hidden; }
+.cust-timer-bar { height: 100%; width: 100%; border-radius: 2px; transition: background 0.4s; }
+.serve-hint { font-size: 8px; color: var(--muted); text-align: center; margin-top: 5px; letter-spacing: 1px; text-transform: uppercase; }
+.stall-empty { text-align: center; padding: 32px 16px; color: var(--muted); font-size: 10px; line-height: 1.8; }
+.stall-empty .big { font-size: 28px; margin-bottom: 8px; }
+.stall-nostock { text-align: center; padding: 24px 16px; color: var(--muted); font-size: 10px; line-height: 1.8; border: 1px dashed var(--border2); border-radius: 8px; margin-top: 4px; }
+.stall-locked { text-align: center; padding: 32px 16px; color: var(--muted); font-size: 10px; line-height: 1.9; }
+.stall-locked .big { font-size: 28px; margin-bottom: 8px; }
+.stall-earnings { display: flex; justify-content: space-between; background: var(--bg2); border: 1px solid var(--border); border-radius: 6px; padding: 7px 12px; margin-bottom: 10px; font-size: 10px; }
+.stall-earnings .se-val { color: var(--gold); font-weight: 500; }
+@keyframes floatUp { 0%{opacity:1;transform:translateY(0) scale(1)} 100%{opacity:0;transform:translateY(-48px) scale(0.85)} }
+.float-money { position:fixed; font-size:13px; font-family:'DM Mono',monospace; font-weight:500; color:var(--green); pointer-events:none; z-index:400; animation:floatUp 0.9s ease-out forwards; }
+
+/* ── FRESHNESS GRID ── */
+.freshness-section { background: var(--bg2); border: 1px solid var(--border); border-radius: 6px; padding: 8px 10px; margin-bottom: 10px; }
+.freshness-label { font-size: 9px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px; }
+.freshness-grid { display: flex; flex-wrap: wrap; gap: 4px; }
+.meal-block { width: 20px; height: 20px; border-radius: 4px; border: 1px solid rgba(0,0,0,0.3); transition: background 0.5s; cursor: default; }
+.meal-block.fresh { background: var(--green); }
+.meal-block.aging { background: var(--gold); }
+.meal-block.stale { background: var(--red); animation: pulse-stale 0.7s ease-in-out infinite; }
+@keyframes pulse-stale { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.6;transform:scale(0.88)} }
+
+/* ── MENU BUTTON ── */
+#menu-btn { background: transparent; border: 1px solid var(--border2); border-radius: 5px; color: var(--muted); cursor: pointer; font-size: 16px; padding: 5px 10px; line-height: 1; transition: all 0.15s; margin-left: 12px; }
+#menu-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+/* ── MENU OVERLAY ── */
+#menu-overlay { position: fixed; inset: 0; background: #000a; z-index: 400; display: none; align-items: center; justify-content: center; }
+#menu-overlay.open { display: flex; }
+#menu-panel { background: var(--bg2); border: 1px solid var(--border2); border-radius: 12px; width: 380px; max-width: 94vw; max-height: 88vh; overflow-y: auto; }
+#menu-panel-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px 10px; border-bottom: 1px solid var(--border); }
+#menu-panel-header h2 { font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: var(--gold); letter-spacing: 2px; }
+#menu-close { background: transparent; border: none; color: var(--muted); font-size: 20px; cursor: pointer; line-height: 1; padding: 0 2px; }
+#menu-close:hover { color: var(--text); }
+.menu-section { padding: 14px 18px; border-bottom: 1px solid var(--border); }
+.menu-section:last-child { border-bottom: none; }
+.menu-section-title { font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; }
+.menu-stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 12px; }
+.menu-stat { display: flex; justify-content: space-between; font-size: 11px; padding: 3px 0; border-bottom: 1px solid #1a1a24; }
+.menu-stat .mk { color: var(--muted); }
+.menu-stat .mv { color: var(--text); font-weight: 500; }
+.menu-stat .mv.gold { color: var(--gold); }
+.menu-stat .mv.green { color: var(--green); }
+.menu-stat .mv.blue { color: var(--blue); }
+.menu-stat .mv.purple { color: var(--purple); }
+.menu-btn-row { display: flex; gap: 8px; margin-top: 4px; }
+.menu-action-btn { flex: 1; padding: 8px; font-family: 'DM Mono', monospace; font-size: 10px; border-radius: 5px; cursor: pointer; letter-spacing: 1px; text-transform: uppercase; transition: all 0.15s; }
+.menu-action-btn.save { border: 1px solid var(--green); background: transparent; color: var(--green); }
+.menu-action-btn.save:hover { background: var(--green); color: #000; }
+.menu-action-btn.danger { border: 1px solid #5a1a1a; background: transparent; color: #7a3a3a; }
+.menu-action-btn.danger:hover { border-color: var(--red); color: var(--red); }
+#menu-save-time { font-size: 9px; color: var(--muted); margin-top: 6px; }
+#menu-reset-confirm { display: none; margin-top: 8px; background: #1a0808; border: 1px solid #5a1a1a; border-radius: 5px; padding: 8px 12px; font-size: 10px; color: var(--red); line-height: 1.6; }
+#menu-reset-confirm .confirm-btns { display: flex; gap: 6px; margin-top: 8px; }
+.confirm-yes { flex:1; padding:6px; font-family:'DM Mono',monospace; font-size:10px; border-radius:4px; cursor:pointer; border:1px solid var(--red); background:transparent; color:var(--red); transition:all 0.15s; }
+.confirm-yes:hover { background:var(--red); color:#fff; }
+.confirm-no { flex:1; padding:6px; font-family:'DM Mono',monospace; font-size:10px; border-radius:4px; cursor:pointer; border:1px solid var(--border2); background:transparent; color:var(--muted); transition:all 0.15s; }
+.confirm-no:hover { background:var(--border2); color:var(--text); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 680px) {
+  #layout { grid-template-columns: 1fr; }
+  #sidebar { border-right: none; border-bottom: 1px solid var(--border); }
+  #header h1 { font-size: 20px; }
+  #header-stats { gap: 10px; }
+}
+</style>
+</head>
+<body>
+
+<!-- TUTORIAL OVERLAY -->
+<div id="tutorial-overlay">
+  <div id="tutorial-box">
+    <h2>ETHAN MAKES IT</h2>
+    <div class="tut-sub">A FOODTUBE IDLE RPG</div>
+    <div class="tut-dots" id="tut-dots"></div>
+    <div id="tut-steps">
+      <div class="tut-step active">
+        <p>Meet <strong style="color:var(--gold)">Ethan</strong> — a 26-year-old with a tiny apartment kitchen, a secondhand camera, and a dream to become a food YouTube creator.</p>
+        <p>He's got $10, a bag of eggs, and zero subscribers. Your job? Help him build an empire — one recipe at a time.</p>
+        <div class="tut-tip">🎮 This is an idle game. Start actions and let them run — no babysitting required.</div>
+      </div>
+      <div class="tut-step">
+        <p>Every action has a <strong style="color:var(--gold)">timer bar</strong>. Click the action to start it. When the bar fills up, you earn rewards automatically.</p>
+        <p>Actions keep looping on their own once started. You click to <em>launch</em>, the game does the rest.</p>
+        <div class="tut-tip">⏱ Upgrades reduce timers. Managers make actions run forever without clicking.</div>
+      </div>
+      <div class="tut-step">
+        <p>New actions and upgrades <strong style="color:var(--gold)">unlock as you progress</strong> — level up your cooking skill, earn money, and grow your subscriber count.</p>
+        <p>Watch for glowing unlock notifications when new content becomes available!</p>
+        <div class="tut-tip">🔓 Start with "Cook Eggs" and work your way up to Wagyu Ramen and brand deals.</div>
+      </div>
+      <div class="tut-step">
+        <p>Hit <strong style="color:var(--red)">100,000 subscribers</strong> and you can <strong style="color:var(--red)">Go Viral</strong> — a prestige that resets progress but grants permanent multipliers.</p>
+        <p>Each prestige makes everything faster and more rewarding. True FoodTubers go viral more than once.</p>
+        <div class="tut-tip">📈 Your first goal: cook something, film it, and get your first subscriber.</div>
+      </div>
+    </div>
+    <div class="tut-btns">
+      <button class="tut-btn skip" onclick="closeTutorial()">Skip</button>
+      <button class="tut-btn" id="tut-next-btn" onclick="tutNext()">Let's Cook →</button>
+    </div>
+  </div>
+</div>
+
+<!-- NOTIFICATIONS -->
+<div id="notif-container"></div>
+
+<!-- MENU OVERLAY -->
+<div id="menu-overlay" onclick="handleMenuOverlayClick(event)">
+  <div id="menu-panel">
+    <div id="menu-panel-header">
+      <h2>⚙ Menu</h2>
+      <button id="menu-close" onclick="closeMenu()">✕</button>
+    </div>
+    <div class="menu-section">
+      <div class="menu-section-title">📊 Stats</div>
+      <div class="menu-stat-grid">
+        <div class="menu-stat"><span class="mk">Money</span><span class="mv gold" id="ms-money">—</span></div>
+        <div class="menu-stat"><span class="mk">Level</span><span class="mv purple" id="ms-level">—</span></div>
+        <div class="menu-stat"><span class="mk">Subscribers</span><span class="mv blue" id="ms-subs">—</span></div>
+        <div class="menu-stat"><span class="mk">Total Views</span><span class="mv green" id="ms-views">—</span></div>
+        <div class="menu-stat"><span class="mk">Hype</span><span class="mv" id="ms-hype">—</span></div>
+        <div class="menu-stat"><span class="mk">Income/s</span><span class="mv gold" id="ms-income">—</span></div>
+        <div class="menu-stat"><span class="mk">Meals Cooked</span><span class="mv" id="ms-cooks">—</span></div>
+        <div class="menu-stat"><span class="mk">Meals Served</span><span class="mv green" id="ms-served">—</span></div>
+        <div class="menu-stat"><span class="mk">Meal Stock</span><span class="mv gold" id="ms-stock">—</span></div>
+        <div class="menu-stat"><span class="mk">Meals Spoiled</span><span class="mv" style="color:var(--red)" id="ms-spoiled">—</span></div>
+        <div class="menu-stat"><span class="mk">Stall Earned</span><span class="mv gold" id="ms-stall">—</span></div>
+        <div class="menu-stat"><span class="mk">Videos Filmed</span><span class="mv" id="ms-filmed">—</span></div>
+        <div class="menu-stat"><span class="mk">Videos Edited</span><span class="mv" id="ms-edits">—</span></div>
+        <div class="menu-stat"><span class="mk">Prestiges</span><span class="mv" id="ms-prestiges">—</span></div>
+        <div class="menu-stat"><span class="mk">Clout Points</span><span class="mv purple" id="ms-clout">—</span></div>
+        <div class="menu-stat"><span class="mk">Managers</span><span class="mv green" id="ms-managers">—</span></div>
+      </div>
+    </div>
+    <div class="menu-section">
+      <div class="menu-section-title">✦ Multipliers</div>
+      <div class="menu-stat-grid">
+        <div class="menu-stat"><span class="mk">Cook XP</span><span class="mv purple" id="ms-mx-xp">—</span></div>
+        <div class="menu-stat"><span class="mk">Sub Gain</span><span class="mv blue" id="ms-mx-sub">—</span></div>
+        <div class="menu-stat"><span class="mk">View Gain</span><span class="mv green" id="ms-mx-view">—</span></div>
+        <div class="menu-stat"><span class="mk">Speed</span><span class="mv gold" id="ms-mx-speed">—</span></div>
+        <div class="menu-stat"><span class="mk">Money</span><span class="mv gold" id="ms-mx-money">—</span></div>
+      </div>
+    </div>
+    <div class="menu-section">
+      <div class="menu-section-title">🔊 Sound</div>
+      <div class="menu-btn-row">
+        <button id="mute-btn" class="menu-action-btn save" onclick="toggleMute()" style="border-color:var(--border2);color:var(--muted);">🔊 Sounds On</button>
+      </div>
+    </div>
+    <div class="menu-section">
+      <div class="menu-section-title">💾 Save &amp; Load</div>
+      <div class="menu-btn-row">
+        <button class="menu-action-btn save" onclick="menuSave()">Save Now</button>
+      </div>
+      <div id="menu-save-time">Last save: not yet saved this session</div>
+    </div>
+    <div class="menu-section">
+      <div class="menu-section-title">⚠ Reset</div>
+      <div class="menu-btn-row">
+        <button class="menu-action-btn danger" onclick="showMenuReset()">Reset Game</button>
+      </div>
+      <div id="menu-reset-confirm">
+        This will wipe all progress and start fresh. This cannot be undone.
+        <div class="confirm-btns">
+          <button class="confirm-yes" onclick="doReset()">Yes, reset everything</button>
+          <button class="confirm-no" onclick="hideMenuReset()">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HEADER -->
+<div id="header">
+  <div>
+    <h1>ETHAN MAKES IT</h1>
+    <div id="header-sub">FOODTUBE IDLE RPG</div>
+    <div id="title-rank">★ Aspiring Cook</div>
+  </div>
+  <div id="header-stats">
+    <div class="hstat">
+      <div class="hstat-val" id="h-money">$10</div>
+      <div class="hstat-label">Money</div>
+    </div>
+    <div class="hstat">
+      <div class="hstat-val blue" id="h-subs">0</div>
+      <div class="hstat-label">Subscribers</div>
+    </div>
+    <div class="hstat">
+      <div class="hstat-val green" id="h-views">0</div>
+      <div class="hstat-label">Views</div>
+    </div>
+  </div>
+  <button id="menu-btn" onclick="openMenu()">☰</button>
+</div>
+
+<!-- LAYOUT -->
+<div id="layout">
+  <div id="sidebar">
+    <div id="scene-wrap">
+      <svg id="scene" viewBox="0 0 260 160" xmlns="http://www.w3.org/2000/svg">
+        <rect width="260" height="160" fill="#0e0e18"/>
+        <rect x="0" y="0" width="260" height="100" fill="#14142a"/>
+        <rect x="0" y="100" width="260" height="60" fill="#1a1008"/>
+        <line x1="0" y1="25" x2="260" y2="25" stroke="#1e1e3a" stroke-width="1"/>
+        <line x1="0" y1="50" x2="260" y2="50" stroke="#1e1e3a" stroke-width="1"/>
+        <line x1="0" y1="75" x2="260" y2="75" stroke="#1e1e3a" stroke-width="1"/>
+        <line x1="65" y1="0" x2="65" y2="100" stroke="#1e1e3a" stroke-width="1"/>
+        <line x1="130" y1="0" x2="130" y2="100" stroke="#1e1e3a" stroke-width="1"/>
+        <line x1="195" y1="0" x2="195" y2="100" stroke="#1e1e3a" stroke-width="1"/>
+        <rect x="10" y="90" width="180" height="18" fill="#2a1c0e" rx="2"/>
+        <rect x="10" y="106" width="180" height="40" fill="#1e1408" rx="2"/>
+        <rect x="18" y="68" width="80" height="28" fill="#222232" rx="3"/>
+        <circle cx="38" cy="82" r="9" fill="#1a1a2a" stroke="#333" stroke-width="1.5"/>
+        <circle cx="38" cy="82" r="4" fill="#1e1e2e" id="sc-b1"/>
+        <circle cx="78" cy="82" r="9" fill="#1a1a2a" stroke="#333" stroke-width="1.5"/>
+        <circle cx="78" cy="82" r="4" fill="#1e1e2e" id="sc-b2"/>
+        <ellipse cx="38" cy="70" rx="14" ry="5" fill="#2d2d3d" id="sc-pan"/>
+        <rect x="52" y="68" width="16" height="3" fill="#444" rx="1"/>
+        <rect x="200" y="30" width="48" height="120" fill="#1e2a3a" rx="3"/>
+        <rect x="202" y="32" width="44" height="55" fill="#16212e" rx="2"/>
+        <rect x="202" y="89" width="44" height="59" fill="#16212e" rx="2"/>
+        <circle cx="238" cy="59" r="2.5" fill="#444"/>
+        <circle cx="238" cy="118" r="2.5" fill="#444"/>
+        <rect x="155" y="40" width="34" height="22" fill="#111" rx="3"/>
+        <circle cx="168" cy="51" r="7" fill="#0a0a14" stroke="#333" stroke-width="1"/>
+        <circle cx="168" cy="51" r="4" fill="#0e0e20"/>
+        <rect x="185" y="44" width="8" height="6" fill="#0a0a0a" rx="1"/>
+        <circle cx="158" cy="43" r="2.5" fill="#cc0000" id="sc-rec" opacity="0"/>
+        <line x1="172" y1="62" x2="172" y2="96" stroke="#444" stroke-width="1.5"/>
+        <line x1="158" y1="96" x2="186" y2="96" stroke="#444" stroke-width="1.5"/>
+        <rect x="108" y="72" width="55" height="18" fill="#7a5c18" rx="2"/>
+        <rect x="116" y="75" width="10" height="12" fill="#c0392b" rx="1"/>
+        <rect x="130" y="77" width="8" height="9" fill="#f39c12" rx="1"/>
+        <rect x="142" y="75" width="10" height="12" fill="#27ae60" rx="1"/>
+        <g id="sc-ethan">
+          <rect x="56" y="55" width="26" height="40" fill="#2980b9" rx="2"/>
+          <rect x="58" y="60" width="22" height="35" fill="#ecf0f1" rx="1"/>
+          <circle cx="69" cy="46" r="14" fill="#e8b86a"/>
+          <rect x="57" y="32" width="24" height="10" fill="#3a1e05" rx="5"/>
+          <circle cx="64" cy="44" r="2" fill="#2c1810"/>
+          <circle cx="74" cy="44" r="2" fill="#2c1810"/>
+          <path d="M64 51 Q69 56 74 51" stroke="#2c1810" stroke-width="1.5" fill="none"/>
+          <rect x="38" y="60" width="18" height="8" fill="#2980b9" rx="2"/>
+          <rect x="66" y="60" width="18" height="8" fill="#2980b9" rx="2"/>
+          <circle cx="35" cy="64" r="5" fill="#e8b86a"/>
+          <circle cx="87" cy="64" r="5" fill="#e8b86a"/>
+          <rect x="57" y="95" width="10" height="20" fill="#1c2833" rx="1"/>
+          <rect x="71" y="95" width="10" height="20" fill="#1c2833" rx="1"/>
+        </g>
+        <g id="sc-steam" opacity="0">
+          <path d="M33 58 Q28 48 33 38 Q38 28 33 18" stroke="#777" stroke-width="2" fill="none" opacity="0.5"/>
+          <path d="M43 58 Q38 46 43 36 Q48 26 43 16" stroke="#777" stroke-width="2" fill="none" opacity="0.3"/>
+        </g>
+        <rect x="6" y="116" width="80" height="32" fill="#00000088" rx="3"/>
+        <text x="12" y="127" fill="#888" font-family="monospace" font-size="7" font-weight="bold">SUBSCRIBERS</text>
+        <text x="12" y="143" fill="#e05252" font-family="monospace" font-size="12" font-weight="bold" id="sc-subs">0</text>
+        <rect x="92" y="116" width="80" height="32" fill="#00000088" rx="3"/>
+        <text x="98" y="127" fill="#888" font-family="monospace" font-size="7" font-weight="bold">VIEWS</text>
+        <text x="98" y="143" fill="#8888ff" font-family="monospace" font-size="12" font-weight="bold" id="sc-views">0</text>
+      </svg>
+    </div>
+
+    <div class="section-title">Ethan's Stats</div>
+    <div class="stat-row"><span class="skey">Money</span><span class="sval gold" id="st-money">$10</span></div>
+    <div class="stat-row"><span class="skey">Subscribers</span><span class="sval blue" id="st-subs">0</span></div>
+    <div class="stat-row"><span class="skey">Total Views</span><span class="sval green" id="st-views">0</span></div>
+    <div class="stat-row"><span class="skey">Skill Level</span><span class="sval purple" id="st-level">1</span></div>
+    <div class="stat-row"><span class="skey">Prestiges</span><span class="sval" id="st-prestiges">0</span></div>
+    <div class="stat-row"><span class="skey">Income/s</span><span class="sval gold" id="st-income">$0.00</span></div>
+
+    <div class="section-title">Progress</div>
+    <div class="bar-row">
+      <div class="bar-label-row"><span>Skill XP</span><span id="xp-label">0/100</span></div>
+      <div class="bar-track"><div class="bar-fill xp" id="xp-bar" style="width:0%"></div></div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-label-row"><span>Hype</span><span id="hype-label">0%</span></div>
+      <div class="bar-track"><div class="bar-fill hype" id="hype-bar" style="width:0%"></div></div>
+    </div>
+
+    <div class="section-title">Multipliers</div>
+    <div class="stat-row"><span class="skey">Cook XP</span><span class="sval" id="mx-xp">x1.0</span></div>
+    <div class="stat-row"><span class="skey">Sub Gain</span><span class="sval" id="mx-sub">x1.0</span></div>
+    <div class="stat-row"><span class="skey">View Gain</span><span class="sval" id="mx-view">x1.0</span></div>
+    <div class="stat-row"><span class="skey">Speed</span><span class="sval" id="mx-speed">x1.0</span></div>
+
+    <div id="prestige-zone">
+      <div class="section-title">Prestige</div>
+      <div id="prestige-card">
+        <h3>GO VIRAL</h3>
+        <p id="prestige-desc">Reach 100,000 subscribers to unlock prestige. Reset progress, keep upgrades, gain permanent bonuses.</p>
+        <button id="go-viral-btn" onclick="showPrestigeConfirm()" disabled>✦ GO VIRAL ✦</button>
+        <div class="clout-preview" id="clout-preview" style="display:none"></div>
+        <div id="prestige-confirm-zone">
+          <p>Reset level, money, subs &amp; views. Keep all upgrades &amp; gain +25% permanent bonus to everything.</p>
+          <div class="prestige-btns">
+            <button class="pbtn pbtn-yes" onclick="doPrestige()">Yes, go viral!</button>
+            <button class="pbtn pbtn-no" onclick="hidePrestigeConfirm()">Not yet</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="save-info">💾 autosaves every 15s · <span id="reset-btn" onclick="showResetConfirm()" style="cursor:pointer;color:#7070a0;transition:color 0.15s;" onmouseover="this.style.color='#e05252'" onmouseout="this.style.color='#7070a0'">reset</span></div>
+    <div id="reset-confirm" style="display:none;margin-top:6px;background:#1a0808;border:1px solid #5a1a1a;border-radius:5px;padding:7px 10px;font-size:10px;color:#e05252;">
+      Wipe all progress?
+      <span onclick="doReset()" style="cursor:pointer;margin-left:8px;padding:2px 8px;border:1px solid #e05252;border-radius:3px;color:#e05252;" onmouseover="this.style.background='#e05252';this.style.color='#000'" onmouseout="this.style.background='';this.style.color='#e05252'">yes, reset</span>
+      <span onclick="hideResetConfirm()" style="cursor:pointer;margin-left:6px;color:#7070a0;" onmouseover="this.style.color='#e8e8f0'" onmouseout="this.style.color='#7070a0'">cancel</span>
+    </div>
+    <div id="ticker">keep cooking, ethan.</div>
+  </div>
+
+  <div id="main">
+    <div id="tabs">
+      <button class="tab-btn active" onclick="switchTab('actions')">Actions</button>
+      <button class="tab-btn" onclick="switchTab('stall')">Stall</button>
+      <button class="tab-btn" onclick="switchTab('upgrades')">Upgrades</button>
+      <button class="tab-btn" onclick="switchTab('milestones')">Milestones</button>
+      <button class="tab-btn" onclick="switchTab('prestige')">Prestige</button>
+    </div>
+    <div id="tab-actions"><div id="action-list"></div></div>
+    <div id="tab-upgrades" style="display:none"><div class="upgrade-grid" id="upgrade-list"></div></div>
+    <div id="tab-stall" style="display:none"><div id="stall-wrap"></div></div>
+    <div id="tab-milestones" style="display:none"><div id="milestone-list"></div></div>
+    <div id="tab-prestige" style="display:none"><div id="prestige-shop-wrap"></div></div>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════
+//  AUDIO ENGINE
+// ════════════════════════════════════════════════
+
+let _audioCtx = null;
+let sfxMuted = false;
+
+function _ctx(){
+  if(!_audioCtx) _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if(_audioCtx.state === 'suspended') _audioCtx.resume();
+  return _audioCtx;
+}
+
+function _tone(freq, type='sine', dur=0.15, vol=0.25, delay=0){
+  if(sfxMuted) return;
+  try{
+    const ctx = _ctx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, ctx.currentTime + delay);
+    gain.gain.setValueAtTime(vol, ctx.currentTime + delay);
+    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + delay + dur);
+    osc.start(ctx.currentTime + delay);
+    osc.stop(ctx.currentTime + delay + dur + 0.05);
+  } catch(e){}
+}
+
+function _noise(dur=0.08, vol=0.08, delay=0){
+  if(sfxMuted) return;
+  try{
+    const ctx = _ctx();
+    const buf = ctx.createBuffer(1, ctx.sampleRate * dur, ctx.sampleRate);
+    const data = buf.getChannelData(0);
+    for(let i=0;i<data.length;i++) data[i]=(Math.random()*2-1);
+    const src = ctx.createBufferSource();
+    src.buffer = buf;
+    const gain = ctx.createGain();
+    src.connect(gain); gain.connect(ctx.destination);
+    gain.gain.setValueAtTime(vol, ctx.currentTime + delay);
+    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + delay + dur);
+    src.start(ctx.currentTime + delay);
+  } catch(e){}
+}
+
+const SFX = {
+  complete(){ _tone(523,'sine',0.13,0.18); _tone(784,'sine',0.10,0.13,0.07); },
+  cook(){ _noise(0.06,0.12); _tone(220,'sine',0.12,0.12,0.02); _tone(330,'triangle',0.08,0.1,0.06); },
+  film(){ _noise(0.04,0.18); _tone(1200,'sine',0.04,0.08,0.02); },
+  serve(){ _tone(1047,'square',0.06,0.12); _tone(1319,'square',0.05,0.10,0.05); _tone(1568,'sine',0.12,0.18,0.09); },
+  miss(){ _tone(330,'sine',0.10,0.12); _tone(220,'sine',0.12,0.10,0.08); _tone(165,'sine',0.10,0.08,0.16); },
+  levelUp(){ [523,659,784,1047].forEach((f,i)=>_tone(f,'sine',0.20,0.28,i*0.10)); _tone(1047,'triangle',0.30,0.20,0.42); },
+  unlock(){ _tone(880,'sine',0.10,0.18); _tone(1100,'sine',0.14,0.22,0.07); _tone(1320,'sine',0.10,0.16,0.14); },
+  milestone(){ [523,659,784,1047,1319].forEach((f,i)=>_tone(f,'triangle',0.22,0.28,i*0.08)); },
+  upgrade(){ _tone(600,'sine',0.08,0.20); _tone(900,'sine',0.10,0.22,0.06); _tone(1200,'sine',0.08,0.18,0.13); },
+  manager(){ [440,554,659,880].forEach((f,i)=>_tone(f,'sine',0.16,0.26,i*0.07)); },
+  viral(){ [262,330,392,523,659,784,1047,1319].forEach((f,i)=>_tone(f,'sine',0.35,0.30,i*0.07)); [262,330,392,523].forEach((f,i)=>_tone(f,'triangle',0.40,0.15,0.60+i*0.07)); },
+};
+
+try{ sfxMuted = localStorage.getItem('ethanMuted') === '1'; } catch(e){}
+function toggleMute(){
+  sfxMuted = !sfxMuted;
+  try{ localStorage.setItem('ethanMuted', sfxMuted ? '1' : '0'); } catch(e){}
+  document.getElementById('mute-btn').textContent = sfxMuted ? '🔇 Sounds Off' : '🔊 Sounds On';
+}
+
+// ════════════════════════════════════════════════
+//  GAME DATA DEFINITIONS
+// ════════════════════════════════════════════════
+
+const ACTIONS = [
+  {
+    id:'cook_eggs', name:'Cook Eggs', icon:'🍳', color:'green',
+    baseTime:6000, desc:'Scramble some eggs. The classic beginner move.',
+    earn:'XP +12, Hype +1',
+    unlockAt:{ level:1 },
+    reward(G){ G.xp+=Math.floor(12*G.mx.xp); G.hype=Math.min(100,G.hype+1); }
+  },
+  {
+    id:'buy_groceries', name:'Buy Groceries', icon:'🛒', color:'gold',
+    baseTime:8000, desc:'Restock the pantry. Better ingredients mean better videos.',
+    earn:'Hype +6, XP +5',
+    unlockAt:{ level:1, totalCooks:3 },
+    reward(G){ G.hype=Math.min(100,G.hype+6); G.xp+=Math.floor(5*G.mx.xp); },
+    managerCost:250, managerName:'Delivery Service'
+  },
+  {
+    id:'film_clip', name:'Film a Clip', icon:'📱', color:'blue',
+    baseTime:12000, desc:'Point a phone at the stove and press record. No ring light yet.',
+    earn:'Subs +1–2, XP +10',
+    unlockAt:{ level:1, totalCooks:5 },
+    reward(G){ const s=Math.max(1,Math.floor((1+G.level*0.2)*G.mx.sub*(1+G.hype/250))); G.subs+=s; G.xp+=Math.floor(10*G.mx.xp); },
+    managerCost:350, managerName:'Camera Intern'
+  },
+  {
+    id:'edit_video', name:'Edit Video', icon:'✂️', color:'blue',
+    baseTime:18000, desc:'Trim the dead air, add a title card, slap on some royalty-free music.',
+    earn:'Views +30–120, Money, XP +3',
+    unlockAt:{ level:1, totalFilmed:3 },
+    reward(G){ const v=Math.max(8,Math.floor((30+G.subs*0.04)*G.mx.view*(1+G.hype/120))); G.views+=v; G.money+=Math.max(0.005,v*0.0003*(1+G.level*0.04)); G.xp+=Math.floor(3*G.mx.xp); },
+    managerCost:500, managerName:'Video Editor'
+  },
+  {
+    id:'cook_pasta', name:'Pasta Carbonara', icon:'🍝', color:'green',
+    baseTime:9000, desc:'Level 2 recipe. Rich, indulgent, and you nailed it on the third attempt.',
+    earn:'XP +22, Hype +4',
+    unlockAt:{ level:2 },
+    reward(G){ G.xp+=Math.floor(22*G.mx.xp); G.hype=Math.min(100,G.hype+4); }
+  },
+  {
+    id:'promote', name:'Promote Channel', icon:'📣', color:'gold',
+    baseTime:16000, desc:'Post to socials, reply to comments, beg friends to subscribe.',
+    earn:'Subs +3–10, Hype +8',
+    unlockAt:{ subs:10 },
+    reward(G){ const s=Math.max(1,Math.floor((2+G.level*0.4)*G.mx.sub*(1+G.hype/150))); G.subs+=s; G.hype=Math.min(100,G.hype+8); },
+    managerCost:700, managerName:'Social Manager'
+  },
+  {
+    id:'thumbnail', name:'Design Thumbnail', icon:'🎨', color:'blue',
+    baseTime:20000, desc:'A compelling thumbnail doubles your click-through rate. Time well spent.',
+    earn:'Views boost, Hype +10',
+    unlockAt:{ level:2, totalEdits:3 },
+    reward(G){ const v=Math.max(30,Math.floor((150+G.subs*0.08)*G.mx.view*(1+G.hype/90))); G.views+=v; G.hype=Math.min(100,G.hype+10); G.money+=v*0.0006; },
+    managerCost:800, managerName:'Design Intern'
+  },
+  {
+    id:'cook_stirfry', name:'Beef Stir Fry', icon:'🥩', color:'green',
+    baseTime:12000, desc:'Level 3 recipe. Sizzling wok, bold flavors, confident technique.',
+    earn:'XP +40, Hype +7',
+    unlockAt:{ level:3 },
+    reward(G){ G.xp+=Math.floor(40*G.mx.xp); G.hype=Math.min(100,G.hype+7); }
+  },
+  {
+    id:'collab', name:'Collab with Creator', icon:'🤝', color:'purple',
+    baseTime:35000, desc:'Film with another YouTuber. Cross-promotion and fresh audience exposure.',
+    earn:'Subs +30–120, Big views boost',
+    unlockAt:{ subs:75, level:3 },
+    reward(G){ const s=Math.max(8,Math.floor((20+G.level*4)*G.mx.sub*(1+G.hype/120))); G.subs+=s; const v=Math.max(60,Math.floor((300+G.subs*0.12)*G.mx.view)); G.views+=v; G.money+=v*0.0007; },
+    managerCost:2000, managerName:'Collab Coordinator'
+  },
+  {
+    id:'sponsorship', name:'Land a Sponsorship', icon:'💼', color:'gold',
+    baseTime:55000, desc:'Pitch to brands. One yes changes your whole financial picture.',
+    earn:'$60–250, Hype +12',
+    unlockAt:{ subs:300, level:4 },
+    reward(G){ const m=(60+G.level*10)*(1+G.hype/100); G.money+=m; G.hype=Math.min(100,G.hype+12); G.xp+=Math.floor(35*G.mx.xp); },
+    managerCost:4000, managerName:'Brand Agent'
+  },
+  {
+    id:'cook_sushi', name:'Sushi Rolls', icon:'🍣', color:'green',
+    baseTime:15000, desc:'Level 5 recipe. Precision craft, beautiful presentation — viewers go wild.',
+    earn:'XP +80, Hype +12',
+    unlockAt:{ level:5 },
+    reward(G){ G.xp+=Math.floor(80*G.mx.xp); G.hype=Math.min(100,G.hype+12); }
+  },
+  {
+    id:'cook_wellington', name:'Beef Wellington', icon:'🥩', color:'green',
+    baseTime:20000, desc:'Level 6 recipe. Three days of prep, one perfect shot. The ultimate flex.',
+    earn:'XP +150, Hype +18',
+    unlockAt:{ level:6 },
+    reward(G){ G.xp+=Math.floor(150*G.mx.xp); G.hype=Math.min(100,G.hype+18); }
+  },
+  {
+    id:'merch', name:'Launch Merch Store', icon:'👕', color:'gold',
+    baseTime:65000, desc:'Aprons, mugs, Ethan-branded everything. Fans become walking billboards.',
+    earn:'$120–500 passive, Subs +20',
+    unlockAt:{ subs:1000, level:7 },
+    reward(G){ const m=(120+G.subs*0.01)*(1+G.hype/100); G.money+=m; G.subs+=Math.floor(20*G.mx.sub); },
+    managerCost:6500, managerName:'Merch Manager'
+  },
+  {
+    id:'cook_ramen', name:'Wagyu Ramen', icon:'🍜', color:'green',
+    baseTime:25000, desc:'Level 8 recipe. $200 of ingredients, 6 hours of filming. This one breaks the internet.',
+    earn:'XP +280, Hype +25',
+    unlockAt:{ level:8 },
+    reward(G){ G.xp+=Math.floor(280*G.mx.xp); G.hype=Math.min(100,G.hype+25); }
+  },
+  {
+    id:'viral_video', name:'Chase a Viral Moment', icon:'🔥', color:'purple',
+    baseTime:90000, desc:'Go all-in. Rent a studio, hire a crew, stake it all on one perfect video.',
+    earn:'Subs +600–4000, Views explode',
+    unlockAt:{ subs:5000, level:9 },
+    reward(G){ const s=Math.max(100,Math.floor((300+G.level*20)*G.mx.sub*(1+G.hype/100))); G.subs+=s; const v=Math.max(1500,Math.floor((6000+G.subs)*G.mx.view)); G.views+=v; G.money+=v*0.001; G.hype=Math.min(100,G.hype+28); },
+    managerCost:15000, managerName:'Viral Strategist'
+  },
+];
+
+const UPGRADES_DEF = [
+  { id:'ug1',  name:'Better Knife Set',         icon:'🔪', cost:40,    desc:'Cook XP x1.5',                  unlockAt:{level:1},               effect(G){G.mx.xp*=1.5;} },
+  { id:'ug2',  name:'Ring Light',               icon:'💡', cost:80,    desc:'Sub gain x1.3',                 unlockAt:{level:1,totalFilmed:1},  effect(G){G.mx.sub*=1.3;} },
+  { id:'ug3',  name:'Lavalier Mic',             icon:'🎙️', cost:150,   desc:'View gain x1.5',                unlockAt:{level:2},               effect(G){G.mx.view*=1.5;} },
+  { id:'ug4',  name:'Faster Cutting Technique', icon:'⚡', cost:250,   desc:'All speed x1.3',                unlockAt:{level:2},               effect(G){G.mx.speed*=1.3;} },
+  { id:'ug5',  name:'DSLR Camera',              icon:'📷', cost:400,   desc:'Sub & view gain x1.5',          unlockAt:{level:3,subs:25},       effect(G){G.mx.sub*=1.5;G.mx.view*=1.5;} },
+  { id:'ug6',  name:'Adobe Premiere Pro',       icon:'🎬', cost:600,   desc:'Speed x1.5, view gain x1.5',   unlockAt:{level:3,totalEdits:5},  effect(G){G.mx.speed*=1.5;G.mx.view*=1.5;} },
+  { id:'ug7',  name:'Meal Prep System',         icon:'📦', cost:500,   desc:'Cook XP x2, speed x1.2',       unlockAt:{level:4},               effect(G){G.mx.xp*=2;G.mx.speed*=1.2;} },
+  { id:'ug8',  name:'YouTube SEO Course',       icon:'📊', cost:800,   desc:'Sub gain x1.5',                unlockAt:{level:4,subs:100},      effect(G){G.mx.sub*=1.5;} },
+  { id:'ug9',  name:'Studio Kitchen Upgrade',   icon:'🏗️', cost:1800,  desc:'XP, sub & view gain x1.25',    unlockAt:{level:5},               effect(G){G.mx.xp*=1.25;G.mx.sub*=1.25;G.mx.view*=1.25;} },
+  { id:'ug10', name:'Sponsorship Deck',         icon:'📋', cost:2500,  desc:'Money from actions x3',        unlockAt:{level:5,subs:300},      effect(G){G.mx.money*=3;} },
+  { id:'ug11', name:'Drone Camera',             icon:'🚁', cost:4000,  desc:'View gain x3',                 unlockAt:{level:6,subs:600},      effect(G){G.mx.view*=3;} },
+  { id:'ug12', name:'Hired Videographer',       icon:'🎥', cost:6000,  desc:'All speed x2',                 unlockAt:{level:7},               effect(G){G.mx.speed*=2;} },
+  { id:'ug13', name:'Brand Partnership',        icon:'🤝', cost:8000,  desc:'Sub gain x1.5, money x1.5',   unlockAt:{level:7,subs:1000},     effect(G){G.mx.sub*=1.5;G.mx.money*=1.5;} },
+  { id:'ug14', name:'Food Network Appearance',  icon:'📺', cost:15000, desc:'All multipliers x1.5',         unlockAt:{level:9,subs:4000},     effect(G){G.mx.xp*=1.5;G.mx.sub*=1.5;G.mx.view*=1.5;G.mx.speed*=1.5;} },
+  { id:'ug15', name:'Netflix Deal',             icon:'🎭', cost:50000, desc:'Everything x3',                unlockAt:{level:12,subs:40000},   effect(G){G.mx.xp*=3;G.mx.sub*=3;G.mx.view*=3;G.mx.speed*=3;} },
+  // Cook automation unlock
+  { id:'ug_autocook', name:'Auto-Cook Station', icon:'🤖', cost:350, desc:'Install a timer system in the kitchen — lets you set one recipe to loop automatically.', unlockAt:{level:3, totalCooks:25}, effect(G){} },
+];
+
+const MILESTONES_DEF = [
+  {id:'ms1',  name:'First Meal Cooked',               check:G=>G.totalCooks>=1,      reward:'XP +20'},
+  {id:'ms2',  name:'First Video Filmed',              check:G=>G.totalFilmed>=1,     reward:'Hype +10'},
+  {id:'ms3',  name:'First 10 Subscribers',            check:G=>G.subs>=10,           reward:'Sub gain x1.2'},
+  {id:'ms4',  name:'First $100 Earned',               check:G=>G.money>=100,         reward:'Money gain x1.2'},
+  {id:'ms5',  name:'First 100 Subscribers',           check:G=>G.subs>=100,          reward:'View gain x1.2'},
+  {id:'ms6',  name:'Level 3 Chef',                    check:G=>G.level>=3,           reward:'Speed x1.1'},
+  {id:'ms7',  name:'2,000 Total Views',               check:G=>G.views>=2000,        reward:'Sub gain x1.3'},
+  {id:'ms8',  name:'500 Subscribers',                 check:G=>G.subs>=500,          reward:'All x1.2'},
+  {id:'ms9',  name:'100 Recipes Cooked',              check:G=>G.totalCooks>=100,    reward:'Cook speed x1.5'},
+  {id:'ms10', name:'Level 5 Chef',                    check:G=>G.level>=5,           reward:'XP gain x1.5'},
+  {id:'ms11', name:'15,000 Views',                    check:G=>G.views>=15000,       reward:'View gain x1.5'},
+  {id:'ms12', name:'First $500 Earned',               check:G=>G.money>=500,         reward:'Income x1.5'},
+  {id:'ms13', name:'5,000 Subscribers!',              check:G=>G.subs>=5000,         reward:'All x1.5'},
+  {id:'ms14', name:'Level 9 Chef',                    check:G=>G.level>=9,           reward:'All x1.5'},
+  {id:'ms15', name:'500,000 Views',                   check:G=>G.views>=500000,      reward:'View gain x2'},
+  {id:'ms16', name:'100,000 Subscribers — Go Viral!', check:G=>G.subs>=100000,       reward:'Prestige unlocked'},
+];
+
+
+const PRESTIGE_UPGRADES = [
+  {
+    id:'pu_start_money', name:'Seed Funding', icon:'💸',
+    desc:'Begin each run with more starting money.',
+    tiers:[
+      {cost:5,   effect:'Start with $50'},
+      {cost:18,  effect:'Start with $200'},
+      {cost:60,  effect:'Start with $750'},
+      {cost:150, effect:'Start with $3,000'},
+    ]
+  },
+  {
+    id:'pu_start_subs', name:'Loyal Base', icon:'👥',
+    desc:'Begin each run with existing subscribers.',
+    tiers:[
+      {cost:6,   effect:'Start with 50 subs'},
+      {cost:22,  effect:'Start with 250 subs'},
+      {cost:70,  effect:'Start with 1,000 subs'},
+      {cost:180, effect:'Start with 5,000 subs'},
+    ]
+  },
+  {
+    id:'pu_start_level', name:'Chef Prodigy', icon:'👨‍🍳',
+    desc:'Begin each run at a higher Chef Level.',
+    tiers:[
+      {cost:25,  effect:'Start at Level 2'},
+      {cost:80,  effect:'Start at Level 3'},
+      {cost:200, effect:'Start at Level 5'},
+    ]
+  },
+  {
+    id:'pu_speed', name:'Muscle Memory', icon:'⚡',
+    desc:'Permanent ×1.15 action speed per tier.',
+    tiers:[
+      {cost:8,   effect:'Speed ×1.15'},
+      {cost:25,  effect:'Speed ×1.32'},
+      {cost:70,  effect:'Speed ×1.52'},
+      {cost:160, effect:'Speed ×1.75'},
+    ]
+  },
+  {
+    id:'pu_xp_gain', name:'Culinary Instincts', icon:'🎓',
+    desc:'Permanent ×1.2 XP gain per tier.',
+    tiers:[
+      {cost:6,  effect:'XP ×1.2'},
+      {cost:20, effect:'XP ×1.44'},
+      {cost:60, effect:'XP ×1.73'},
+    ]
+  },
+  {
+    id:'pu_sub_gain', name:'Viral DNA', icon:'🧬',
+    desc:'Permanent ×1.2 subscriber gain per tier.',
+    tiers:[
+      {cost:10,  effect:'Subs ×1.2'},
+      {cost:30,  effect:'Subs ×1.44'},
+      {cost:90,  effect:'Subs ×1.73'},
+      {cost:200, effect:'Subs ×2.07'},
+    ]
+  },
+  {
+    id:'pu_view_gain', name:'Algorithm Whisperer', icon:'📊',
+    desc:'Permanent ×1.2 view gain per tier.',
+    tiers:[
+      {cost:8,  effect:'Views ×1.2'},
+      {cost:25, effect:'Views ×1.44'},
+      {cost:70, effect:'Views ×1.73'},
+    ]
+  },
+  {
+    id:'pu_money_gain', name:'Monetization Expert', icon:'💰',
+    desc:'Permanent ×1.2 money gain per tier.',
+    tiers:[
+      {cost:10,  effect:'Money ×1.2'},
+      {cost:35,  effect:'Money ×1.44'},
+      {cost:100, effect:'Money ×1.73'},
+    ]
+  },
+  {
+    id:'pu_hype_decay', name:'Brand Recognition', icon:'📣',
+    desc:'Hype decays 20% slower per tier.',
+    tiers:[
+      {cost:8,  effect:'Hype decay ×0.80'},
+      {cost:28, effect:'Hype decay ×0.64'},
+      {cost:80, effect:'Hype decay ×0.51'},
+    ]
+  },
+  {
+    id:'pu_stall_unlock', name:'Food Truck Veteran', icon:'🚚',
+    desc:'Unlock the food stall after fewer cooks.',
+    tiers:[
+      {cost:12,  effect:'Stall unlocks after 5 cooks'},
+      {cost:40,  effect:'Stall unlocks after 2 cooks'},
+      {cost:110, effect:'Stall unlocks after 1st cook'},
+    ]
+  },
+  {
+    id:'pu_stall_price', name:'Premium Branding', icon:'🏷️',
+    desc:'Meals sell for more at the stall.',
+    tiers:[
+      {cost:10, effect:'Meal price ×1.2'},
+      {cost:32, effect:'Meal price ×1.44'},
+      {cost:90, effect:'Meal price ×1.73'},
+    ]
+  },
+  {
+    id:'pu_freshness', name:'Food Safety Pro', icon:'🌡️',
+    desc:'Meals stay fresh longer before spoiling.',
+    tiers:[
+      {cost:10, effect:'Freshness ×1.25'},
+      {cost:32, effect:'Freshness ×1.56'},
+      {cost:90, effect:'Freshness ×1.95'},
+    ]
+  },
+  {
+    id:'pu_manager_disc', name:'Industry Connections', icon:'🤝',
+    desc:'Managers cost 20% less per tier.',
+    tiers:[
+      {cost:15,  effect:'Managers 20% cheaper'},
+      {cost:50,  effect:'Managers 36% cheaper'},
+      {cost:140, effect:'Managers 49% cheaper'},
+    ]
+  },
+];
+const TITLES = [
+  [1,'Aspiring Cook'],[2,'Home Chef'],[3,'Recipe Tester'],[4,'Content Creator'],
+  [5,'Food Blogger'],[6,'Food Influencer'],[7,'YouTube Chef'],[8,'Trending Creator'],
+  [9,'Food Icon'],[10,'Culinary Legend'],[12,'Internet Chef'],[15,'Culinary Empire']
+];
+
+const TICKERS = [
+  'keep cooking, ethan. the algorithm loves consistency.',
+  'ethan stirs the pot... literally and figuratively.',
+  'one viral video changes everything.',
+  'salt, fat, acid, heat — and good lighting.',
+  '"this video took 3 days to make" — ethan, probably.',
+  'consistency beats perfection, every time.',
+  'the subscribe button is right there, viewers...',
+  'ethan checks his analytics at 2am again.',
+  'a food youtuber must eat their mistakes.',
+];
+
+
+// ════════════════════════════════════════════════
+//  PRESTIGE HELPERS
+// ════════════════════════════════════════════════
+
+// Returns tier index (0-based) of a prestige upgrade, or -1 if not bought
+function getPrestigeTier(id){ return G.prestigeUpgrades[id] !== undefined ? G.prestigeUpgrades[id] : -1; }
+
+// How many Clout Points you'd earn going viral right now
+function calcCloutEarned(){
+  const subsCp     = Math.floor(Math.sqrt(G.subs / 300));
+  const prestigeCp = Math.floor(G.prestiges * 1.5);
+  const raw = Math.max(5, 5 + subsCp + prestigeCp);
+  // Hard cap per run: grows slowly so early runs stay lean
+  const cap = 15 + G.prestiges * 3;
+  return Math.min(raw, cap);
+}
+
+// Apply prestige upgrade multipliers on top of G.mx (called at end of reapplyUpgrades)
+function applyPrestigeMultipliers(){
+  const t = id => getPrestigeTier(id);
+  if(t('pu_speed')    >= 0) G.mx.speed *= Math.pow(1.15, t('pu_speed')    + 1);
+  if(t('pu_xp_gain')  >= 0) G.mx.xp    *= Math.pow(1.20, t('pu_xp_gain')  + 1);
+  if(t('pu_sub_gain') >= 0) G.mx.sub   *= Math.pow(1.20, t('pu_sub_gain') + 1);
+  if(t('pu_view_gain')>= 0) G.mx.view  *= Math.pow(1.20, t('pu_view_gain')+ 1);
+  if(t('pu_money_gain')>=0) G.mx.money *= Math.pow(1.20, t('pu_money_gain')+1);
+}
+
+// Apply prestige upgrades that affect starting state (called in doPrestige after reset)
+function applyPrestigeStartBonuses(){
+  const moneyTier = getPrestigeTier('pu_start_money');
+  if(moneyTier >= 0) G.money = [50, 200, 750, 3000][moneyTier];
+
+  const subsTier = getPrestigeTier('pu_start_subs');
+  if(subsTier >= 0) G.subs = [50, 250, 1000, 5000][subsTier];
+
+  const levelTier = getPrestigeTier('pu_start_level');
+  if(levelTier >= 0){
+    const target = [2, 3, 5][levelTier];
+    while(G.level < target){ G.level++; G.xpNeeded = Math.floor(G.xpNeeded * 1.45); }
+  }
+}
+
+// Hype decay rate, modified by prestige upgrade
+function getHypeDecayRate(){
+  const base = 0.015;
+  const tier = getPrestigeTier('pu_hype_decay');
+  return tier >= 0 ? base * Math.pow(0.80, tier + 1) : base;
+}
+
+// Buy a prestige upgrade tier
+function buyPrestigeUpgrade(id){
+  const pu = PRESTIGE_UPGRADES.find(p => p.id === id);
+  if(!pu) return;
+  const currentTier = getPrestigeTier(id);
+  const nextTier = currentTier + 1;
+  if(nextTier >= pu.tiers.length) return; // maxed
+  const cost = pu.tiers[nextTier].cost;
+  if(G.cloutPoints < cost) return;
+  G.cloutPoints -= cost;
+  G.prestigeUpgrades[id] = nextTier;
+  SFX.upgrade();
+  notify('✦ Prestige: ' + pu.name + ' — ' + pu.tiers[nextTier].effect, 'purple');
+  addLog('Prestige upgrade: ' + pu.name + ' Tier ' + (nextTier + 1), 'good');
+  // Re-apply multipliers immediately (start bonuses apply next prestige)
+  reapplyUpgrades();
+  renderPrestigeShop();
+  updateStats();
+}
+
+// ════════════════════════════════════════════════
+//  GAME STATE
+// ════════════════════════════════════════════════
+
+const DEFAULT_G = ()=>({
+  money:10, subs:0, views:0, level:1, xp:0, xpNeeded:220, hype:0, prestiges:0,
+  totalCooks:0, totalFilmed:0, totalEdits:0, totalMealsServed:0, mealStock:0, mealsSpoiled:0, tick:0,
+  mx:{ xp:1, sub:1, view:1, speed:1, money:1 },
+  mealQueue:[],
+  ownedUpgrades:[], doneMilestones:[], managers:[],
+  prestigeUpgrades:{}, cloutPoints:0, totalCloutEarned:0,
+  activeCookId:null, stallWasUnlocked:false,
+  actionTimers:{},
+  unlockedActions:[], unlockedUpgrades:[]
+});
+
+let G = DEFAULT_G();
+let activeTimers = {};
+let currentTab = 'actions';
+let lastTick = Date.now();
+let ethanBob = 0, ethanBobDir = 1;
+
+// ════════════════════════════════════════════════
+//  INCOME TRACKER — FIX: dedicated EMA interval
+//  (removed noisy delta-in-updateStats approach)
+// ════════════════════════════════════════════════
+
+let incomeBaseline = G.money;
+let incomeBaselineTime = Date.now();
+let smoothedIncome = 0;
+
+setInterval(() => {
+  const now = Date.now();
+  const elapsed = (now - incomeBaselineTime) / 1000;
+  if (elapsed > 0) {
+    const earned = Math.max(0, G.money - incomeBaseline);
+    const rate = earned / elapsed;
+    // Exponential moving average — smooths out big action spikes
+    smoothedIncome = smoothedIncome * 0.75 + rate * 0.25;
+    incomeBaseline = G.money;
+    incomeBaselineTime = now;
+  }
+}, 2000);
+
+
+// ════════════════════════════════════════════════
+//  AUTO-COOK TOGGLE
+// ════════════════════════════════════════════════
+
+const COOK_IDS = ['cook_eggs','cook_pasta','cook_stirfry','cook_sushi','cook_wellington','cook_ramen'];
+const MAX_MEAL_STOCK = 12; // auto-cook pauses above this to avoid overflow
+
+function setActiveCook(id){
+  const prev = G.activeCookId;
+
+  // Stop whichever cook was previously auto-running
+  if(prev && prev !== id){
+    if(G.actionTimers[prev]) G.actionTimers[prev].running = false;
+    if(activeTimers[prev]){ cancelAnimationFrame(activeTimers[prev]); delete activeTimers[prev]; }
+  }
+
+  if(G.activeCookId === id){
+    // Toggle off — deactivate
+    G.activeCookId = null;
+    if(G.actionTimers[id]) G.actionTimers[id].running = false;
+    if(activeTimers[id]){ cancelAnimationFrame(activeTimers[id]); delete activeTimers[id]; }
+    addLog('Auto-cook stopped.', 'info');
+  } else {
+    G.activeCookId = id;
+    // Start loop if not already running
+    if(!G.actionTimers[id]) G.actionTimers[id] = {progress:0, running:false};
+    if(!G.actionTimers[id].running) startAction(id);
+    addLog('Auto-cook set to: ' + ACTIONS.find(a=>a.id===id)?.name, 'info');
+  }
+  renderActions();
+}
+
+// Add a single newly-unlocked action card to its column without
+// rebuilding existing cards — prevents in-flight click disruption
+function insertUnlockedActionCard(action){
+  const isCook = COOK_IDS.includes(action.id);
+  const colId  = isCook ? 'kitchen-col' : 'content-col';
+  const col    = document.getElementById(colId);
+  if(!col) { renderActions(); return; } // fallback if columns not yet rendered
+  // Remove its locked-preview card if present
+  const existing = document.getElementById('ac-' + action.id);
+  if(existing) existing.remove();
+  // Build and append the new card
+  const tmp = document.createElement('div');
+  tmp.innerHTML = buildActionCard(action, false);
+  const card = tmp.firstElementChild;
+  col.appendChild(card);
+}
+
+// ════════════════════════════════════════════════
+//  UNLOCK CHECKS
+// ════════════════════════════════════════════════
+
+function isActionUnlocked(a){
+  const u = a.unlockAt;
+  if(u.level && G.level < u.level) return false;
+  if(u.subs && G.subs < u.subs) return false;
+  if(u.money && G.money < u.money) return false;
+  if(u.totalCooks && G.totalCooks < u.totalCooks) return false;
+  if(u.totalFilmed && G.totalFilmed < u.totalFilmed) return false;
+  if(u.totalEdits && G.totalEdits < u.totalEdits) return false;
+  return true;
+}
+function isUpgradeUnlocked(u){
+  const r = u.unlockAt;
+  if(r.level && G.level < r.level) return false;
+  if(r.subs && G.subs < r.subs) return false;
+  if(r.money && G.money < r.money) return false;
+  if(r.totalEdits && G.totalEdits < r.totalEdits) return false;
+  if(r.totalFilmed && G.totalFilmed < r.totalFilmed) return false;
+  return true;
+}
+
+function getActionDuration(a){
+  return Math.max(500, a.baseTime / G.mx.speed);
+}
+
+// ════════════════════════════════════════════════
+//  ACTION TIMER ENGINE
+// ════════════════════════════════════════════════
+
+function startAction(id){
+  if(!G.actionTimers[id]) G.actionTimers[id] = {progress:0, running:false};
+  const st = G.actionTimers[id];
+  if(st.running) return;
+  st.running = true;
+  runActionLoop(id);
+}
+
+function runActionLoop(id){
+  const action = ACTIONS.find(a=>a.id===id);
+  if(!action || !isActionUnlocked(action)) return;
+  const st = G.actionTimers[id];
+  if(!st || !st.running) return;
+
+  const duration = getActionDuration(action);
+  const startTime = Date.now() - (st.progress * duration);
+
+  function tick(){
+    if(!G.actionTimers[id] || !G.actionTimers[id].running){
+      delete activeTimers[id];
+      return;
+    }
+    const elapsed = Date.now() - startTime;
+    const pct = Math.min(1, elapsed / duration);
+    G.actionTimers[id].progress = pct;
+
+    const bar = document.getElementById('ap-'+id);
+    if(bar) bar.style.width = (pct*100)+'%';
+
+    if(pct >= 1){
+      // Hold bar at 100% — don't zero progress until after collectReward
+      // so any renderActions called during reward sees 100%, not 0%
+      if(bar) bar.style.width = '100%';
+      const card = document.getElementById('ac-'+id);
+      if(card){
+        card.classList.remove('action-complete-flash');
+        void card.offsetWidth;
+        card.classList.add('action-complete-flash');
+        setTimeout(()=>card.classList.remove('action-complete-flash'), 600);
+      }
+      if(action.id.startsWith('cook_')) SFX.cook();
+      else if(action.id === 'film_clip') SFX.film();
+      else SFX.complete();
+      collectReward(action);
+
+      const isCook = COOK_IDS.includes(id);
+      const shouldLoop = isCook ? (G.activeCookId === id) : G.managers.includes(id);
+      if(shouldLoop){
+        // 250ms hold at 100% so completion is visible before bar resets
+        setTimeout(() => {
+          if(!G.actionTimers[id]) return;
+          G.actionTimers[id].progress = 0;
+          G.actionTimers[id].running = true;
+          runActionLoop(id);
+        }, 250);
+      } else {
+        G.actionTimers[id].progress = 0;
+        G.actionTimers[id].running = false;
+        renderActionCard(id);
+      }
+      return;
+    }
+    activeTimers[id] = requestAnimationFrame(tick);
+  }
+  activeTimers[id] = requestAnimationFrame(tick);
+}
+
+function collectReward(action){
+  if(action.id.startsWith('cook_')){
+    G.totalCooks++;
+    const stockYield = {cook_eggs:1, cook_pasta:2, cook_stirfry:2, cook_sushi:3, cook_wellington:1, cook_ramen:2};
+    const addCount = stockYield[action.id] || 1;
+    if(G.mealQueue.length < MAX_MEAL_STOCK){
+      const freshness = getMealFreshness();
+      const canAdd = Math.min(addCount, MAX_MEAL_STOCK - G.mealQueue.length);
+      for(let i = 0; i < canAdd; i++){
+        G.mealQueue.push({ id: ++mealIdCounter, addedAt: stallUnlocked() ? Date.now() : null, maxAge: freshness });
+      }
+      G.mealStock = G.mealQueue.length;
+      if(currentTab==='stall') renderStall();
+    }
+  }
+  if(action.id === 'film_clip') G.totalFilmed++;
+  if(action.id === 'edit_video' || action.id === 'thumbnail') G.totalEdits++;
+
+  const moneyBefore = G.money;
+  action.reward(G);
+  const earned = G.money - moneyBefore;
+  if(earned > 0) G.money = moneyBefore + earned * G.mx.money;
+
+  checkLevelUp();
+  checkUnlocks();
+  checkMilestones();
+  renderActionCard(action.id);
+}
+
+// ════════════════════════════════════════════════
+//  LEVEL / TITLE
+// ════════════════════════════════════════════════
+
+function checkLevelUp(){
+  let leveled = false;
+  while(G.xp >= G.xpNeeded){
+    G.xp -= G.xpNeeded;
+    G.level++;
+    G.xpNeeded = Math.floor(G.xpNeeded * 1.45);
+    SFX.levelUp();
+    notify('LEVEL UP — now Level '+G.level+'!','');
+    addLog('★ Level Up! Chef Level '+G.level,'great');
+    leveled = true;
+  }
+  if(leveled){ updateTitle(); checkUnlocks(); }
+}
+
+function updateTitle(){
+  let t = 'Aspiring Cook';
+  for(const [lvl,name] of TITLES) if(G.level>=lvl) t=name;
+  const p = G.prestiges>0?' (x'+G.prestiges+' Viral)':'';
+  document.getElementById('title-rank').textContent = '★ '+t+p;
+}
+
+// ════════════════════════════════════════════════
+//  UNLOCKS
+// ════════════════════════════════════════════════
+
+let prevUnlockedActions = new Set();
+let prevUnlockedUpgrades = new Set();
+
+function checkUnlocks(){
+  ACTIONS.forEach(a=>{
+    if(isActionUnlocked(a) && !prevUnlockedActions.has(a.id)){
+      prevUnlockedActions.add(a.id);
+      SFX.unlock();
+      notify('🔓 Unlocked: '+a.name,'blue');
+      addLog('Unlocked action: '+a.name,'info');
+      insertUnlockedActionCard(a);
+    }
+  });
+  UPGRADES_DEF.forEach(u=>{
+    if(isUpgradeUnlocked(u) && !G.ownedUpgrades.includes(u.id) && !prevUnlockedUpgrades.has(u.id)){
+      prevUnlockedUpgrades.add(u.id);
+    }
+  });
+  // Lightweight updates only — full rebuilds happen on tab switch / buy / prestige
+  updateUpgradeGlow();
+  if(currentTab==='prestige') updatePrestigePreview();
+  // Sidebar clout preview
+  const _cpEl = document.getElementById('clout-preview');
+  if(_cpEl){
+    _cpEl.style.display = G.subs >= 50000 ? 'block' : 'none';
+    _cpEl.textContent = 'Going viral now: ~' + calcCloutEarned() + ' CP';
+  }
+}
+
+// ════════════════════════════════════════════════
+//  MILESTONES
+// ════════════════════════════════════════════════
+
+function checkMilestones(){
+  let changed = false;
+  MILESTONES_DEF.forEach(m=>{
+    if(!G.doneMilestones.includes(m.id) && m.check(G)){
+      G.doneMilestones.push(m.id);
+      SFX.milestone();
+      notify('🏆 Milestone: '+m.name,'');
+      addLog('Achievement: '+m.name+' — '+m.reward,'great');
+      if(m.id==='ms3') G.mx.sub*=1.2;
+      if(m.id==='ms4') G.mx.money*=1.2;
+      if(m.id==='ms5') G.mx.view*=1.2;
+      if(m.id==='ms6') G.mx.speed*=1.1;
+      if(m.id==='ms7') G.mx.sub*=1.15;
+      if(m.id==='ms8'){ G.mx.xp*=1.1;G.mx.sub*=1.1;G.mx.view*=1.1; }
+      if(m.id==='ms9') G.mx.speed*=1.2;
+      if(m.id==='ms10') G.mx.xp*=1.3;
+      if(m.id==='ms11') G.mx.view*=1.3;
+      if(m.id==='ms12') G.mx.money*=1.25;
+      if(m.id==='ms13'){ G.mx.xp*=1.2;G.mx.sub*=1.2;G.mx.view*=1.2; }
+      if(m.id==='ms14'){ G.mx.xp*=1.2;G.mx.sub*=1.2;G.mx.view*=1.2;G.mx.speed*=1.2; }
+      if(m.id==='ms15') G.mx.view*=1.5;
+      changed = true;
+    }
+  });
+  if(changed && currentTab==='milestones') renderMilestones();
+}
+
+// ════════════════════════════════════════════════
+//  UPGRADES
+// ════════════════════════════════════════════════
+
+function buyUpgrade(id){
+  const u = UPGRADES_DEF.find(x=>x.id===id);
+  if(!u || G.ownedUpgrades.includes(id) || G.money < u.cost || !isUpgradeUnlocked(u)) return;
+  G.money -= u.cost;
+  G.ownedUpgrades.push(id);
+  u.effect(G);
+  SFX.upgrade();
+  notify('✦ Upgrade: '+u.name,'green');
+  addLog('Bought upgrade: '+u.name,'good');
+  renderUpgrades();
+  updateStats();
+}
+
+function reapplyUpgrades(){
+  G.mx = { xp:1, sub:1, view:1, speed:1, money:1 };
+  G.ownedUpgrades.forEach(id=>{
+    const u = UPGRADES_DEF.find(x=>x.id===id);
+    if(u) u.effect(G);
+  });
+  G.doneMilestones.forEach(id=>{
+    if(id==='ms3') G.mx.sub*=1.2;
+    if(id==='ms4') G.mx.money*=1.2;
+    if(id==='ms5') G.mx.view*=1.2;
+    if(id==='ms6') G.mx.speed*=1.1;
+    if(id==='ms7') G.mx.sub*=1.15;
+    if(id==='ms8'){ G.mx.xp*=1.1;G.mx.sub*=1.1;G.mx.view*=1.1; }
+    if(id==='ms9') G.mx.speed*=1.2;
+    if(id==='ms10') G.mx.xp*=1.3;
+    if(id==='ms11') G.mx.view*=1.3;
+    if(id==='ms12') G.mx.money*=1.25;
+    if(id==='ms13'){ G.mx.xp*=1.2;G.mx.sub*=1.2;G.mx.view*=1.2; }
+    if(id==='ms14'){ G.mx.xp*=1.2;G.mx.sub*=1.2;G.mx.view*=1.2;G.mx.speed*=1.2; }
+    if(id==='ms15') G.mx.view*=1.5;
+  });
+  // Prestige multiplier upgrades stack on top
+  applyPrestigeMultipliers();
+}
+
+// ════════════════════════════════════════════════
+//  PRESTIGE
+// ════════════════════════════════════════════════
+
+function showPrestigeConfirm(){ document.getElementById('prestige-confirm-zone').style.display='block'; }
+function hidePrestigeConfirm(){ document.getElementById('prestige-confirm-zone').style.display='none'; }
+
+function doPrestige(){
+  hidePrestigeConfirm();
+  const cloutEarned = calcCloutEarned();
+  const prev = G.prestiges + 1;
+  // Carry forward only prestige-persistent state
+  const keepPU        = {...G.prestigeUpgrades};
+  const keepClout     = G.cloutPoints + cloutEarned;
+  const keepTotalClout= (G.totalCloutEarned || 0) + cloutEarned;
+
+  // Full reset — no upgrades, no managers, no milestones
+  G = DEFAULT_G();
+  G.prestiges        = prev;
+  G.prestigeUpgrades = keepPU;
+  G.cloutPoints      = keepClout;
+  G.totalCloutEarned = keepTotalClout;
+  G.activeCookId     = null;
+  G.stallWasUnlocked = false;
+
+  // Apply prestige starting bonuses (money, subs, level)
+  applyPrestigeStartBonuses();
+  // Apply prestige multipliers on fresh mx
+  applyPrestigeMultipliers();
+
+  prevUnlockedActions  = new Set();
+  prevUnlockedUpgrades = new Set();
+
+  SFX.viral();
+  notify('★★★ WENT VIRAL! +' + cloutEarned + ' Clout Points earned!', '');
+  addLog('★★★ Prestige #' + prev + ' — earned ' + cloutEarned + ' Clout Points. Fresh start!', 'great');
+  updateTitle();
+  renderAll();
+  renderPrestigeShop();
+  updateStats();
+}
+
+// ════════════════════════════════════════════════
+//  RENDERING
+// ════════════════════════════════════════════════
+
+function fmt(n){
+  n=Math.floor(n);
+  if(n>=1e9) return (n/1e9).toFixed(1)+'B';
+  if(n>=1e6) return (n/1e6).toFixed(1)+'M';
+  if(n>=1000) return (n/1000).toFixed(1)+'K';
+  return n;
+}
+function fmtMoney(n){
+  if(n>=1e6) return '$'+(n/1e6).toFixed(2)+'M';
+  if(n>=1000) return '$'+(n/1000).toFixed(1)+'K';
+  return '$'+n.toFixed(2);
+}
+
+function renderActions(){
+  const el = document.getElementById('action-list');
+
+  const unlockedCooks   = ACTIONS.filter(a=>COOK_IDS.includes(a.id) && isActionUnlocked(a));
+  const lockedCooks     = ACTIONS.filter(a=>COOK_IDS.includes(a.id) && !isActionUnlocked(a)).slice(0,2);
+  const unlockedContent = ACTIONS.filter(a=>!COOK_IDS.includes(a.id) && isActionUnlocked(a));
+  const lockedContent   = ACTIONS.filter(a=>!COOK_IDS.includes(a.id) && !isActionUnlocked(a)).slice(0,2);
+
+  const activeName = G.activeCookId ? ACTIONS.find(a=>a.id===G.activeCookId)?.name : null;
+  const autoLabel  = activeName ? `<span class="auto-cook-indicator">⚙ ${activeName}</span>` : '';
+
+  let kitchenHtml = '';
+  unlockedCooks.forEach(a=>{ kitchenHtml += buildActionCard(a, false); });
+  lockedCooks.forEach(a  =>{ kitchenHtml += buildActionCard(a, true); });
+
+  let contentHtml = '';
+  unlockedContent.forEach(a=>{ contentHtml += buildActionCard(a, false); });
+  lockedContent.forEach(a  =>{ contentHtml += buildActionCard(a, true); });
+
+  el.innerHTML = `<div class="actions-columns">
+    <div class="actions-col" id="kitchen-col">
+      <div class="action-section-title"><span>🍳</span> Kitchen ${autoLabel}</div>
+      ${kitchenHtml}
+    </div>
+    <div class="actions-col" id="content-col">
+      <div class="action-section-title"><span>📱</span> Content &amp; Business</div>
+      ${contentHtml}
+    </div>
+  </div>`;
+
+  [...unlockedCooks, ...unlockedContent].forEach(a=>{
+    if(G.actionTimers[a.id]?.running) updateRunningState(a.id, true);
+  });
+}
+
+function buildActionCard(a, isLocked){
+  const running = G.actionTimers[a.id] && G.actionTimers[a.id].running;
+  const hasManager = COOK_IDS.includes(a.id) ? G.activeCookId === a.id : G.managers.includes(a.id);
+  const duration = getActionDuration(a);
+  const durSec = (duration/1000).toFixed(1)+'s';
+  const color = a.color || 'green';
+
+  let lockReason = '';
+  if(isLocked){
+    const u = a.unlockAt;
+    const parts = [];
+    if(u.level) parts.push('Level '+u.level);
+    if(u.subs) parts.push(fmt(u.subs)+' subs');
+    if(u.money) parts.push('$'+u.money+' money');
+    if(u.totalCooks) parts.push(u.totalCooks+' cooks');
+    if(u.totalFilmed) parts.push(u.totalFilmed+' videos');
+    if(u.totalEdits) parts.push(u.totalEdits+' edits');
+    lockReason = 'Requires: '+parts.join(' + ');
+  }
+
+  const isCookAction = COOK_IDS.includes(a.id);
+  let mgrSection = '';
+  if(!isLocked){
+    if(isCookAction){
+      const hasAutoStation = G.ownedUpgrades.includes('ug_autocook');
+      if(hasAutoStation){
+        const isActive = G.activeCookId === a.id;
+        const stockFull = G.mealQueue && G.mealQueue.length >= MAX_MEAL_STOCK;
+        mgrSection = `<div class="manager-row">
+          <button class="mgr-btn${isActive ? ' mgr-active' : ''}" onclick="event.stopPropagation();setActiveCook('${a.id}')">
+            ${isActive ? (stockFull ? '⏸ Paused — stock full' : '■ Auto-Cook Active — click to stop') : '▶ Set as Auto-Cook'}
+          </button>
+        </div>`;
+      } else {
+        const u = UPGRADES_DEF.find(u=>u.id==='ug_autocook');
+        const meetsLevel = G.level >= 3;
+        const meetsCooks = G.totalCooks >= 25;
+        const reason = !meetsLevel ? 'Requires Level 3' : !meetsCooks ? `Cook ${25-G.totalCooks} more meals` : 'Buy Auto-Cook Station in Upgrades';
+        mgrSection = `<div class="manager-row"><span class="mgr-locked-hint">🔒 Automation locked — ${reason}</span></div>`;
+      }
+    } else if(a.managerCost){
+      const isHired = G.managers.includes(a.id);
+      if(isHired){
+        mgrSection = `<div class="manager-row"><span class="mgr-hired">✓ ${a.managerName} on duty — auto-running</span></div>`;
+      } else {
+        const _disc=getPrestigeTier('pu_manager_disc');
+        const _mult=_disc>=0?Math.pow(0.8,_disc+1):1;
+        const _cost=Math.floor(a.managerCost*_mult);
+        mgrSection = `<div class="manager-row"><button class="mgr-btn${G.money>=_cost?' affordable':''}" onclick="event.stopPropagation();buyManager('${a.id}')" ${G.money<_cost?'disabled':''}>Hire ${a.managerName} — ${fmtMoney(_cost)}</button></div>`;
+      }
+    }
+  }
+
+  return `<div class="action-card${isLocked?' locked':''}" id="ac-${a.id}">
+    <div class="${hasManager?'has-manager':''}">
+      <div class="manager-dot"></div>
+      <div class="action-top" onclick="${isLocked?'':'clickAction(\''+a.id+'\')'}" >
+        <div class="action-icon">${a.icon}</div>
+        <div class="action-info">
+          <div class="action-name">${a.name}</div>
+          <div class="action-desc">${isLocked?lockReason:a.desc}</div>
+          <div class="action-earn">${isLocked?'':'→ '+a.earn}</div>
+        </div>
+        <div class="action-btn-area${running?' running':''}" id="abtn-${a.id}">
+          <div class="action-btn-label">${running ? (hasManager ? 'AUTO' : 'RUNNING') : 'CLICK'}</div>
+          <div class="action-btn-time">${durSec}</div>
+        </div>
+      </div>
+      <div class="action-progress">
+        <div class="action-progress-fill ${color}" id="ap-${a.id}" style="width:${running?(G.actionTimers[a.id].progress*100)+'%':'0%'}"></div>
+      </div>
+    </div>
+    ${mgrSection}
+    ${isLocked?'<div class="lock-overlay">🔒 '+lockReason+'</div>':''}
+  </div>`;
+}
+
+function renderActionCard(id){
+  const a = ACTIONS.find(x=>x.id===id);
+  if(!a) return;
+  const st = G.actionTimers[id];
+  const running = st && st.running;
+  const hasManager = G.managers.includes(id);
+  const btn = document.getElementById('abtn-'+id);
+  if(btn){
+    btn.className = 'action-btn-area' + (running ? ' running' : hasManager ? ' running' : '');
+    btn.querySelector('.action-btn-label').textContent = running ? (hasManager ? 'AUTO' : 'RUNNING') : 'CLICK';
+    btn.querySelector('.action-btn-time').textContent = (getActionDuration(a)/1000).toFixed(1)+'s';
+  }
+}
+
+function updateRunningState(id, running){
+  const btn = document.getElementById('abtn-'+id);
+  if(btn){
+    btn.className = 'action-btn-area'+(running?' running':'');
+    btn.querySelector('.action-btn-label').textContent = running?'RUNNING':'CLICK';
+  }
+}
+
+function clickAction(id){
+  if(!G.actionTimers[id]) G.actionTimers[id]={progress:0,running:false};
+  if(!G.actionTimers[id].running){
+    startAction(id);
+    updateRunningState(id, true);
+    addLog('Started: '+ACTIONS.find(a=>a.id===id).name);
+  }
+}
+
+function buyManager(id){
+  const a = ACTIONS.find(x=>x.id===id);
+  if(!a || G.managers.includes(id) || COOK_IDS.includes(id)) return;
+  const discTier = getPrestigeTier('pu_manager_disc');
+  const discount = discTier >= 0 ? Math.pow(0.8, discTier + 1) : 1;
+  const effectiveCost = Math.floor(a.managerCost * discount);
+  if(G.money < effectiveCost) return;
+  G.money -= effectiveCost;
+  G.managers.push(id);
+  SFX.manager();
+  notify('🤖 Hired: '+a.managerName,'green');
+  addLog('Hired manager: '+a.managerName+' for '+fmtMoney(a.managerCost),'good');
+  if(!G.actionTimers[id] || !G.actionTimers[id].running){
+    startAction(id);
+  }
+  renderActions();
+  updateStats();
+}
+
+function renderUpgrades(){
+  const el = document.getElementById('upgrade-list');
+  if(!el) return;
+  el.innerHTML = UPGRADES_DEF.map(u=>{
+    const owned = G.ownedUpgrades.includes(u.id);
+    const unlocked = isUpgradeUnlocked(u);
+    const affordable = !owned && unlocked && G.money >= u.cost;
+    let cls = 'upgrade-card';
+    if(owned) cls+=' owned';
+    else if(!unlocked) cls+=' locked-u';
+    else if(affordable) cls+=' affordable';
+
+    // Show lock reason for unaffordable locked upgrades
+    let costDisplay;
+    if(owned){ costDisplay = '✓ OWNED'; }
+    else if(!unlocked){
+      const r = u.unlockAt;
+      const parts = [];
+      if(r.level && G.level < r.level) parts.push('Lv'+r.level);
+      if(r.subs && G.subs < r.subs) parts.push(fmt(r.subs)+' subs');
+      if(r.totalEdits && G.totalEdits < r.totalEdits) parts.push(r.totalEdits+' edits');
+      if(r.totalFilmed && G.totalFilmed < r.totalFilmed) parts.push(r.totalFilmed+' vids');
+      costDisplay = '🔒 '+parts.join(', ');
+    } else { costDisplay = fmtMoney(u.cost); }
+
+    return `<div id="ugcard-${u.id}" class="${cls}" onclick="buyUpgrade('${u.id}')">
+      <div class="upgrade-icon">${u.icon}</div>
+      <div class="upgrade-info">
+        <div class="upgrade-name">${u.name}</div>
+        <div class="upgrade-desc">${u.desc}</div>
+      </div>
+      <div class="upgrade-cost">${costDisplay}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderMilestones(){
+  const el = document.getElementById('milestone-list');
+  if(!el) return;
+  el.innerHTML = MILESTONES_DEF.map(m=>{
+    const done = G.doneMilestones.includes(m.id);
+    return `<div class="milestone-item${done?' done':''}">
+      <div class="ms-check">${done?'✓':''}</div>
+      <div class="ms-label">${m.name}</div>
+      <div class="ms-reward">${m.reward}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderPrestigeShop(){
+  const el = document.getElementById('prestige-shop-wrap');
+  if(!el) return;
+
+  const clout = G.cloutPoints || 0;
+  const totalClout = G.totalCloutEarned || 0;
+  const preview = calcCloutEarned();
+
+  let html = `<div class="prestige-header">
+    <div>
+      <h3>✦ Prestige Upgrades</h3>
+      <div style="font-size:9px;color:var(--muted);letter-spacing:1px;margin-top:2px">PERMANENT ACROSS ALL RUNS</div>
+    </div>
+    <div class="clout-display">
+      <span class="clout-val" id="prestige-clout-val">${clout} CP</span>
+      <span class="clout-label">Clout Points</span>
+      <div style="font-size:8px;color:var(--muted);margin-top:2px">Total earned: ${totalClout}</div>
+    </div>
+  </div>`;
+
+  if(G.prestiges === 0 && clout === 0){
+    html += `<div class="prestige-empty">
+      <div class="big">🌟</div>
+      <strong style="color:var(--gold)">Prestige upgrades unlock after your first Go Viral.</strong><br>
+      Reach 100,000 subscribers and go viral to earn<br>
+      <span style="color:var(--gold)">Clout Points</span> — use them here for permanent bonuses<br>
+      that carry over into every future run.<br><br>
+      <span style="color:var(--muted)">First viral will earn approximately <strong style="color:var(--gold)">${preview} CP</strong>.</span>
+    </div>`;
+  } else {
+    const subsSqrt = Math.floor(Math.sqrt(G.subs / 300));
+  const prestigeBonus = Math.floor(G.prestiges * 1.5);
+  html += `<div class="clout-preview" id="prestige-next-viral">Next viral: ~${preview} CP &nbsp;·&nbsp; from subs: ${subsSqrt} &nbsp;·&nbsp; prestige bonus: ${prestigeBonus} &nbsp;·&nbsp; all-time: ${totalClout} CP</div>`;
+    html += `<div class="prestige-grid" style="margin-top:10px">`;
+
+    PRESTIGE_UPGRADES.forEach(pu => {
+      const tier = getPrestigeTier(pu.id);
+      const maxTier = pu.tiers.length - 1;
+      const isMaxed = tier >= maxTier;
+      const nextTier = tier + 1;
+      const nextCost = !isMaxed ? pu.tiers[nextTier].cost : 0;
+      const canAfford = !isMaxed && clout >= nextCost;
+
+      let cls = 'pu-card';
+      if(isMaxed) cls += ' pu-maxed';
+      else if(canAfford) cls += ' pu-affordable';
+
+      // Tier pip track
+      const pips = pu.tiers.map((_,i) =>
+        `<div class="pu-pip${i <= tier ? ' on' : ''}"></div>`
+      ).join('');
+
+      // Current effect summary
+      let effectLine = '';
+      if(tier >= 0) effectLine = `<div class="pu-effect">▶ ${pu.tiers[tier].effect}</div>`;
+      else effectLine = `<div class="pu-effect" style="color:var(--muted)">Not yet purchased</div>`;
+
+      // Button
+      let btn = '';
+      if(isMaxed){
+        btn = `<button class="pu-btn pu-maxed-btn" disabled>✓ Maxed</button>`;
+      } else {
+        btn = `<button class="pu-btn${canAfford ? '' : ''}" onclick="event.stopPropagation();buyPrestigeUpgrade('${pu.id}')" ${canAfford?'':'disabled'}>
+          ${canAfford ? '▲ Upgrade' : '🔒'} — ${nextCost} CP
+        </button>`;
+      }
+
+      html += `<div class="${cls}">
+        <div class="pu-card-top">
+          <div class="pu-icon">${pu.icon}</div>
+          <div>
+            <div class="pu-name">${pu.name}</div>
+            <div class="pu-tier-label">${tier < 0 ? 'LOCKED' : 'TIER ' + (tier+1) + ' / ' + pu.tiers.length}</div>
+          </div>
+        </div>
+        <div class="pu-desc">${pu.desc}</div>
+        <div class="pu-pips">${pips}</div>
+        ${effectLine}
+        ${btn}
+      </div>`;
+    });
+
+    html += `</div>`;
+  }
+
+  el.innerHTML = html;
+
+  // Update clout preview in sidebar
+  const cpEl = document.getElementById('clout-preview');
+  if(cpEl){
+    cpEl.style.display = G.subs >= 50000 ? 'block' : 'none';
+    cpEl.textContent = 'Going viral now earns ~' + preview + ' Clout Points';
+  }
+}
+
+function renderAll(){
+  renderActions();
+  renderUpgrades();
+  renderMilestones();
+  renderPrestigeShop();
+}
+
+// ════════════════════════════════════════════════
+//  STATS UI
+// ════════════════════════════════════════════════
+
+// Lightweight upgrade affordability refresh — no DOM rebuild,
+// safe to call at any frequency without breaking in-flight clicks
+function updateUpgradeGlow(){
+  UPGRADES_DEF.forEach(u => {
+    const card = document.getElementById('ugcard-' + u.id);
+    if(!card) return; // upgrades tab not yet visited
+    const owned    = G.ownedUpgrades.includes(u.id);
+    const unlocked = isUpgradeUnlocked(u);
+    const affordable = !owned && unlocked && G.money >= u.cost;
+    card.className = 'upgrade-card' +
+      (owned ? ' owned' : !unlocked ? ' locked-u' : affordable ? ' affordable' : '');
+    const costEl = card.querySelector('.upgrade-cost');
+    if(!costEl) return;
+    if(owned){
+      costEl.textContent = '✓ OWNED';
+    } else if(!unlocked){
+      const r = u.unlockAt;
+      const parts = [];
+      if(r.level  && G.level      < r.level)      parts.push('Lv'+r.level);
+      if(r.subs   && G.subs       < r.subs)        parts.push(fmt(r.subs)+' subs');
+      if(r.totalEdits  && G.totalEdits  < r.totalEdits)  parts.push(r.totalEdits +' edits');
+      if(r.totalFilmed && G.totalFilmed < r.totalFilmed) parts.push(r.totalFilmed+' vids');
+      if(r.totalCooks  && G.totalCooks  < r.totalCooks)  parts.push(r.totalCooks +' cooks');
+      costEl.textContent = '🔒 ' + (parts.join(', ') || 'locked');
+    } else {
+      costEl.textContent = fmtMoney(u.cost);
+    }
+  });
+}
+
+// Lightweight prestige clout-preview refresh — no DOM rebuild
+function updatePrestigePreview(){
+  const cloutEl = document.getElementById('prestige-clout-val');
+  const previewEl = document.getElementById('prestige-next-viral');
+  if(cloutEl)    cloutEl.textContent = (G.cloutPoints || 0) + ' CP';
+  if(previewEl)  previewEl.textContent = 'Next viral: ~' + calcCloutEarned() + ' CP · Total: ' + (G.totalCloutEarned || 0) + ' CP';
+  updateUpgradeGlow(); // also refresh upgrade tab if open
+}
+
+function updateStats(){
+  document.getElementById('h-money').textContent = fmtMoney(G.money);
+  document.getElementById('h-subs').textContent = fmt(G.subs);
+  document.getElementById('h-views').textContent = fmt(G.views);
+  document.getElementById('st-money').textContent = fmtMoney(G.money);
+  document.getElementById('st-subs').textContent = fmt(G.subs);
+  document.getElementById('st-views').textContent = fmt(G.views);
+  document.getElementById('st-level').textContent = G.level;
+  document.getElementById('st-prestiges').textContent = G.prestiges;
+  document.getElementById('xp-label').textContent = fmt(G.xp)+'/'+fmt(G.xpNeeded);
+  document.getElementById('xp-bar').style.width = Math.min(100,G.xp/G.xpNeeded*100)+'%';
+  document.getElementById('hype-label').textContent = Math.floor(G.hype)+'%';
+  document.getElementById('hype-bar').style.width = Math.floor(G.hype)+'%';
+  document.getElementById('mx-xp').textContent = 'x'+G.mx.xp.toFixed(1);
+  document.getElementById('mx-sub').textContent = 'x'+G.mx.sub.toFixed(1);
+  document.getElementById('mx-view').textContent = 'x'+G.mx.view.toFixed(1);
+  document.getElementById('mx-speed').textContent = 'x'+G.mx.speed.toFixed(1);
+  document.getElementById('sc-subs').textContent = fmt(G.subs);
+  document.getElementById('sc-views').textContent = fmt(G.views);
+  // Income display — driven by the dedicated EMA interval above
+  document.getElementById('st-income').textContent = '$'+smoothedIncome.toFixed(2)+'/s';
+  document.getElementById('go-viral-btn').disabled = G.subs < 100000;
+  document.getElementById('prestige-desc').textContent = G.subs>=100000
+    ? '★ Ready to Go Viral! You\'ve earned it.'
+    : 'Reach 100,000 subscribers to unlock prestige. Currently: '+fmt(G.subs)+'/100K';
+  if(currentTab==='upgrades') renderUpgrades();
+}
+
+// ════════════════════════════════════════════════
+//  SCENE ANIMATIONS
+// ════════════════════════════════════════════════
+
+function animSteam(){ const s=document.getElementById('sc-steam'); s.setAttribute('opacity','1'); setTimeout(()=>s.setAttribute('opacity','0'),2200); }
+function animBurner(){ const b1=document.getElementById('sc-b1'),b2=document.getElementById('sc-b2'); b1.setAttribute('fill','#f60'); b2.setAttribute('fill','#fa0'); setTimeout(()=>{b1.setAttribute('fill','#1e1e2e');b2.setAttribute('fill','#1e1e2e');},1500); }
+function animRec(){ const r=document.getElementById('sc-rec'); let on=true,n=0; const iv=setInterval(()=>{ r.setAttribute('opacity',on?'1':'0'); on=!on; if(++n>7){clearInterval(iv);r.setAttribute('opacity','0');} },300); }
+
+setInterval(()=>{
+  ethanBob+=ethanBobDir*0.5;
+  if(Math.abs(ethanBob)>2) ethanBobDir*=-1;
+  const e=document.getElementById('sc-ethan');
+  if(e) e.setAttribute('transform','translate(0,'+ethanBob.toFixed(1)+')');
+}, 80);
+
+setInterval(()=>{
+  if(G.actionTimers['cook_eggs']?.running || G.actionTimers['cook_pasta']?.running || G.actionTimers['cook_stirfry']?.running || G.actionTimers['cook_sushi']?.running || G.actionTimers['cook_wellington']?.running || G.actionTimers['cook_ramen']?.running){
+    if(Math.random()<0.1){ animSteam(); animBurner(); }
+  }
+  if(G.actionTimers['film_clip']?.running){ if(Math.random()<0.05) animRec(); }
+}, 500);
+
+// ════════════════════════════════════════════════
+//  FOOD STALL MINIGAME
+// ════════════════════════════════════════════════
+
+const CUSTOMER_POOL = [
+  {name:'Alex',emoji:'🧑'},{name:'Sam',emoji:'👩'},{name:'Jordan',emoji:'👨'},
+  {name:'Riley',emoji:'🧑‍💼'},{name:'Casey',emoji:'👩‍🦱'},{name:'Morgan',emoji:'🧔'},
+  {name:'Taylor',emoji:'👩‍🦳'},{name:'Drew',emoji:'🧑‍🎤'},{name:'Quinn',emoji:'🧕'},
+  {name:'Blair',emoji:'👱'},{name:'Reese',emoji:'🧑‍🍳'},{name:'Jamie',emoji:'🧑‍💻'},
+];
+const ORDER_LINES = [
+  'smells amazing from outside','saw it on your channel','friend recommended you',
+  'been waiting all week','this is my lunch break','huge fan btw',
+  'finally found your stall!','just one more please','can I get two?',
+];
+
+let stallCustomers = [];
+let custIdCounter = 0;
+let stallSpawnTimer = null;
+let stallTickTimer = null;
+let stallTotalEarned = 0;
+
+function stallUnlocked(){
+  const tier = getPrestigeTier('pu_stall_unlock');
+  const threshold = tier >= 0 ? [5,2,1][tier] : 10;
+  return G.totalCooks >= threshold;
+}
+
+let mealIdCounter = 0;
+
+// How long a meal stays fresh — shrinks as level rises, capped at 40s minimum
+function getMealFreshness(){
+  // 5 min at L1, scaling down to 3 min by late game — gives stock time to accumulate
+  const base = Math.max(180000, 300000 - G.level * 5000);
+  const tier = getPrestigeTier('pu_freshness');
+  return tier >= 0 ? base * Math.pow(1.25, tier + 1) : base;
+}
+
+function getMealPrice(){
+  const base = 2 + G.level * 1.8;
+  const hypeBonus = 1 + (G.hype / 100) * 0.6;
+  const priceTier = getPrestigeTier('pu_stall_price');
+  const priceBonus = priceTier >= 0 ? Math.pow(1.2, priceTier + 1) : 1;
+  return base * hypeBonus * G.mx.money * priceBonus;
+}
+
+function getCustomerPatience(){
+  return Math.max(7000, 15000 - G.level * 350);
+}
+
+function getSpawnInterval(){
+  return Math.max(3500, 11000 - G.level * 600);
+}
+
+// ── FIX: recursive setTimeout instead of interval-in-interval ──
+// Old code created stacked setIntervals every time the outer fired.
+// Now each spawn schedules exactly one next spawn with the current rate.
+function scheduleNextSpawn() {
+  stallSpawnTimer = setTimeout(() => {
+    if(stallUnlocked()) spawnCustomer();
+    scheduleNextSpawn(); // re-schedule with freshly computed interval
+  }, getSpawnInterval());
+}
+scheduleNextSpawn();
+
+function spawnCustomer(){
+  if(!stallUnlocked()) return;
+  if(G.mealStock <= 0) return;
+  if(stallCustomers.length >= 4) return;
+  const pool = CUSTOMER_POOL.filter(c => !stallCustomers.find(s => s.name === c.name));
+  const pick = pool[Math.floor(Math.random() * pool.length)] || CUSTOMER_POOL[0];
+  const patience = getCustomerPatience();
+  stallCustomers.push({
+    id: ++custIdCounter,
+    name: pick.name,
+    emoji: pick.emoji,
+    order: ORDER_LINES[Math.floor(Math.random() * ORDER_LINES.length)],
+    timeLeft: patience,
+    maxTime: patience,
+    value: getMealPrice(),
+  });
+  if(currentTab === 'stall') renderStall();
+}
+
+function serveCustomer(id, evt){
+  const idx = stallCustomers.findIndex(c => c.id === id);
+  if(idx === -1) return;
+  if(G.mealStock <= 0){
+    notify('No meals in stock — go cook something!','');
+    return;
+  }
+  const c = stallCustomers[idx];
+  G.mealQueue.shift(); // remove oldest (FIFO — freshest stays, stalest sold first)
+  G.mealStock = G.mealQueue.length;
+  G.totalMealsServed++;
+  const earned = c.value;
+  G.money += earned;
+  stallTotalEarned += earned;
+  if(evt){
+    const el = document.createElement('div');
+    el.className = 'float-money';
+    el.textContent = '+' + fmtMoney(earned);
+    el.style.left = (evt.clientX - 20) + 'px';
+    el.style.top  = (evt.clientY - 10) + 'px';
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 950);
+  }
+  SFX.serve();
+  G.hype = Math.min(100, G.hype + 0.5);
+  stallCustomers.splice(idx, 1);
+  renderStall();
+  updateStats();
+  addLog(c.name + ' bought a meal for ' + fmtMoney(earned), 'good');
+}
+
+function tickStall(){
+  if(!stallUnlocked() || stallCustomers.length === 0) return;
+  const dt = 120;
+  let changed = false;
+  stallCustomers = stallCustomers.filter(c => {
+    c.timeLeft -= dt;
+    if(c.timeLeft <= 0){
+      SFX.miss();
+      G.hype = Math.max(0, G.hype - 1.5);
+      changed = true;
+      return false;
+    }
+    const bar = document.getElementById('cb-' + c.id);
+    if(bar){
+      const pct = c.timeLeft / c.maxTime;
+      bar.style.width = (pct * 100) + '%';
+      bar.style.background = pct > 0.5 ? 'var(--green)' : pct > 0.25 ? 'var(--gold)' : 'var(--red)';
+    }
+    return true;
+  });
+  if(changed && currentTab === 'stall') renderStall();
+}
+
+stallTickTimer = setInterval(tickStall, 120);
+
+// Spoilage checker — runs every second
+setInterval(() => {
+  if(!G.mealQueue || G.mealQueue.length === 0) return;
+
+  // Detect first-unlock: start all pending meal timers from now
+  const nowUnlocked = stallUnlocked();
+  if(nowUnlocked && !G.stallWasUnlocked){
+    G.stallWasUnlocked = true;
+    const now2 = Date.now();
+    G.mealQueue.forEach(m => { if(m.addedAt === null) m.addedAt = now2; });
+    if(currentTab === 'stall') renderStall();
+  }
+
+  // Don't expire anything until stall is open
+  if(!nowUnlocked) return;
+
+  const now = Date.now();
+  let spoiledCount = 0;
+  let totalPenalty = 0;
+  G.mealQueue = G.mealQueue.filter(m => {
+    if(m.addedAt === null) return true; // timer not started yet (safety)
+    if(now - m.addedAt >= m.maxAge){
+      spoiledCount++;
+      totalPenalty += getMealPrice() * 0.5;
+      return false;
+    }
+    return true;
+  });
+  if(spoiledCount > 0){
+    G.mealStock = G.mealQueue.length;
+    G.mealsSpoiled += spoiledCount;
+    G.money = Math.max(0, G.money - totalPenalty);
+    G.hype = Math.max(0, G.hype - spoiledCount * 6);
+    addLog(`⚠ ${spoiledCount} meal${spoiledCount>1?'s':''} spoiled — lost ${fmtMoney(totalPenalty)} & ${spoiledCount*6} hype.`, 'bad');
+    if(currentTab === 'stall') renderStall();
+    updateStats();
+  }
+}, 1000);
+
+function renderStall(){
+  const el = document.getElementById('stall-wrap');
+  if(!el) return;
+  if(!stallUnlocked()){
+    el.innerHTML = `<div class="stall-locked">
+      <div class="big">🍳</div>
+      Cook <strong style="color:var(--gold)">10 meals</strong> to unlock the Food Stall.<br>
+      <span style="color:var(--muted)">${G.totalCooks}/10 cooked so far</span>
+    </div>`;
+    return;
+  }
+  const price = getMealPrice();
+  let html = `
+    <div class="stall-header">
+      <div class="stall-title">🏪 Food Stall</div>
+      <div class="stall-stock-badge">Stock: <span>${G.mealStock}</span> meals</div>
+    </div>
+    <div class="stall-hint">Meals spoil if not sold in time — losing money and hype. Keep stock lean and cook fresh batches often.</div>
+    <div class="stall-earnings">
+      <span>Price/meal</span><span class="se-val">${fmtMoney(price)}</span>
+      <span style="margin-left:8px">Earned</span><span class="se-val">${fmtMoney(stallTotalEarned)}</span>
+      <span style="margin-left:8px;color:var(--red)">Spoiled</span><span class="se-val" style="color:var(--red)">${G.mealsSpoiled}</span>
+    </div>`;
+  // Freshness grid
+  if(G.mealQueue && G.mealQueue.length > 0){
+    const now = Date.now();
+    html += `<div class="freshness-section">
+      <div class="freshness-label">🌡 Meal Freshness <span style="color:var(--muted);font-size:9px">(${G.mealQueue.length} in stock)</span></div>
+      <div class="freshness-grid">`;
+    G.mealQueue.forEach(m => {
+      if(m.addedAt === null){
+        html += `<div class="meal-block fresh" title="Stall not open yet — timer not started" style="opacity:0.4;border-style:dashed"></div>`;
+        return;
+      }
+      const pct = Math.max(0, 1 - (now - m.addedAt) / m.maxAge);
+      const secLeft = Math.ceil((m.maxAge - (now - m.addedAt)) / 1000);
+      const minLeft = secLeft >= 60 ? Math.floor(secLeft/60)+'m '+(secLeft%60)+'s' : secLeft+'s';
+      let cls = pct > 0.6 ? 'fresh' : pct > 0.25 ? 'aging' : 'stale';
+      html += `<div class="meal-block ${cls}" title="${minLeft} left"></div>`;
+    });
+    html += `</div></div>`;
+  }
+  html += ``;
+  if(G.mealStock === 0 && stallCustomers.length === 0){
+    html += `<div class="stall-nostock">📦 Out of stock — head to Actions and cook something to restock.</div>`;
+  } else if(stallCustomers.length === 0){
+    html += `<div class="stall-empty"><div class="big">👀</div>Waiting for customers...<br><span style="font-size:9px">They'll show up shortly.</span></div>`;
+  } else {
+    html += `<div class="customer-grid">`;
+    stallCustomers.forEach(c => {
+      const pct = c.timeLeft / c.maxTime;
+      const barColor = pct > 0.5 ? 'var(--green)' : pct > 0.25 ? 'var(--gold)' : 'var(--red)';
+      html += `<div class="customer-card" onclick="event.stopPropagation();serveCustomer(${c.id}, event)">
+        <div class="cust-top">
+          <div class="cust-emoji">${c.emoji}</div>
+          <div class="cust-info">
+            <div class="cust-name">${c.name}</div>
+            <div class="cust-order">"${c.order}"</div>
+          </div>
+        </div>
+        <div class="cust-value">${fmtMoney(c.value)}</div>
+        <div class="cust-timer-track"><div class="cust-timer-bar" id="cb-${c.id}" style="width:${pct*100}%;background:${barColor}"></div></div>
+        <div class="serve-hint">tap to serve</div>
+      </div>`;
+    });
+    html += `</div>`;
+    if(G.mealStock === 0) html += `<div class="stall-nostock" style="margin-top:8px">📦 No more stock — cook more to keep serving!</div>`;
+  }
+  el.innerHTML = html;
+}
+
+// ════════════════════════════════════════════════
+//  LOG
+// ════════════════════════════════════════════════
+
+function addLog(msg, type=''){ /* log tab removed */ }
+
+
+// ════════════════════════════════════════════════
+//  NOTIFICATIONS
+// ════════════════════════════════════════════════
+
+function notify(msg, cls=''){
+  const c = document.getElementById('notif-container');
+  const d = document.createElement('div');
+  d.className = 'notif'+(cls?' '+cls:'');
+  d.textContent = msg;
+  c.appendChild(d);
+  setTimeout(()=>d.remove(), 3200);
+}
+
+// ════════════════════════════════════════════════
+//  TABS
+// ════════════════════════════════════════════════
+
+function switchTab(tab){
+  currentTab = tab;
+  ['actions','stall','upgrades','milestones','prestige'].forEach(t=>{
+    document.getElementById('tab-'+t).style.display = t===tab?'block':'none';
+  });
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>{
+    b.classList.toggle('active', ['actions','stall','upgrades','milestones','prestige'][i]===tab);
+  });
+  if(tab==='upgrades') renderUpgrades();
+  if(tab==='milestones') renderMilestones();
+  if(tab==='stall') renderStall();
+  if(tab==='prestige') renderPrestigeShop();
+}
+
+// ════════════════════════════════════════════════
+//  HYPE DECAY
+// ════════════════════════════════════════════════
+
+setInterval(()=>{
+  G.hype = Math.max(0, G.hype - getHypeDecayRate());
+  if(G.hype>25 && G.totalFilmed>0){
+    G.subs += G.hype/100 * G.mx.sub * 0.1;
+  }
+  if(G.totalEdits>0) G.views += G.subs*0.00005*G.mx.view;
+  G.tick++;
+  updateStats();
+  checkMilestones();
+  checkUnlocks();
+}, 500);
+
+// ════════════════════════════════════════════════
+//  TICKER
+// ════════════════════════════════════════════════
+
+let tickIdx = 0;
+setInterval(()=>{
+  tickIdx=(tickIdx+1)%TICKERS.length;
+  document.getElementById('ticker').textContent = TICKERS[tickIdx];
+}, 9000);
+
+// ════════════════════════════════════════════════
+//  SAVE / LOAD
+// ════════════════════════════════════════════════
+
+function saveGame(){
+  try{
+    const timerSnap = {};
+    Object.keys(G.actionTimers).forEach(id=>{
+      timerSnap[id] = {progress: G.actionTimers[id].progress, running: G.actionTimers[id].running};
+    });
+    const save = { G:{...G, mx:{...G.mx}, actionTimers:timerSnap}, savedAt: Date.now(), stallEarned: stallTotalEarned };
+    localStorage.setItem('ethanV3', JSON.stringify(save));
+    document.getElementById('save-info').textContent = '💾 saved '+new Date().toLocaleTimeString();
+  } catch(e){}
+}
+
+function loadGame(){
+  try{
+    const raw = localStorage.getItem('ethanV3');
+    if(!raw) return 0;
+    const save = JSON.parse(raw);
+    if(!save.G) return 0;
+    Object.assign(G, save.G);
+    if(save.G.mx) G.mx = {...save.G.mx};
+    // FIX: guarantee mx.money exists in saves from older versions that lacked it
+    G.mx.money = G.mx.money || 1;
+    // Guarantee prestige currency fields exist in older saves
+    G.prestigeUpgrades  = G.prestigeUpgrades  || {};
+    G.cloutPoints       = G.cloutPoints       || 0;
+    G.totalCloutEarned  = G.totalCloutEarned  || 0;
+    // Migrate old saves that lack mealQueue — treat existing mealStock as fresh meals
+    if(!G.mealQueue){
+      G.mealQueue = [];
+      const freshness = getMealFreshness();
+      const _stalOpen = G.totalCooks >= (getPrestigeTier('pu_stall_unlock') >= 0 ? [5,2,1][getPrestigeTier('pu_stall_unlock')] : 10);
+      for(let i = 0; i < G.mealStock; i++){
+        G.mealQueue.push({ id: ++mealIdCounter, addedAt: _stalOpen ? Date.now() : null, maxAge: freshness });
+      }
+    }
+    G.stallWasUnlocked = G.stallWasUnlocked || false;
+    G.activeCookId = G.activeCookId || null;
+    G.mealsSpoiled = G.mealsSpoiled || 0;
+    // Cull meals that expired while offline
+    const now = Date.now();
+    const offlineExpired = G.mealQueue.filter(m => now - m.addedAt >= m.maxAge).length;
+    G.mealQueue = G.mealQueue.filter(m => now - m.addedAt < m.maxAge);
+    G.mealStock = G.mealQueue.length;
+    if(offlineExpired > 0) G.mealsSpoiled += offlineExpired;
+    stallTotalEarned = save.stallEarned || 0;
+    return save.savedAt || Date.now();
+  } catch(e){ return 0; }
+}
+
+function applyOfflineProgress(savedAt){
+  const offlineSecs = Math.min((Date.now() - savedAt) / 1000, 3600 * 8);
+  if(offlineSecs < 15) return;
+  let anyProgress = false;
+  ACTIONS.forEach(a=>{
+    if(!G.actionTimers[a.id]?.running) return;
+    const dur = Math.max(0.5, getActionDuration(a) / 1000);
+    const completions = Math.min(Math.floor(offlineSecs / dur), 2000);
+    if(completions <= 0) return;
+    anyProgress = true;
+    for(let i = 0; i < completions; i++){
+      if(a.id.startsWith('cook_')) G.totalCooks++;
+      if(a.id === 'film_clip') G.totalFilmed++;
+      if(a.id === 'edit_video' || a.id === 'thumbnail') G.totalEdits++;
+      const moneyBefore = G.money;
+      a.reward(G);
+      const earned = G.money - moneyBefore;
+      if(earned > 0) G.money = moneyBefore + earned * G.mx.money;
+    }
+  });
+  if(anyProgress){
+    checkLevelUp();
+    checkMilestones();
+    checkUnlocks();
+    const mins = Math.floor(offlineSecs / 60);
+    const timeStr = mins >= 60 ? Math.floor(mins/60)+'h '+(mins%60)+'m' : mins+'m';
+    notify('⏰ Offline '+timeStr+' — progress applied!','blue');
+    addLog('Offline progress: '+timeStr+' of earnings applied.','info');
+  }
+  // Report offline meal spoilage (culled in loadGame above)
+  const offlineExpiredCount = G.mealsSpoiled - (G.mealsSpoiled || 0);
+  // (spoilage already applied in loadGame; just surface a log note if meals were lost)
+  const culledCount = (savedAt > 0 && G.mealQueue !== undefined)
+    ? 0 // already logged via loadGame cull
+    : 0;
+}
+
+setInterval(saveGame, 15000);
+
+function showResetConfirm(){ document.getElementById('reset-confirm').style.display='block'; }
+function hideResetConfirm(){ document.getElementById('reset-confirm').style.display='none'; }
+function doReset(){
+  try{ localStorage.removeItem('ethanV3'); localStorage.removeItem('ethanTutDone'); } catch(e){}
+  location.reload();
+}
+
+function openMenu(){
+  updateMenuStats();
+  document.getElementById('menu-overlay').classList.add('open');
+  document.getElementById('menu-reset-confirm').style.display = 'none';
+  document.getElementById('mute-btn').textContent = sfxMuted ? '🔇 Sounds Off' : '🔊 Sounds On';
+}
+function closeMenu(){ document.getElementById('menu-overlay').classList.remove('open'); }
+function handleMenuOverlayClick(e){ if(e.target === document.getElementById('menu-overlay')) closeMenu(); }
+function menuSave(){
+  saveGame();
+  const el = document.getElementById('menu-save-time');
+  if(el) el.textContent = 'Saved at ' + new Date().toLocaleTimeString();
+}
+function showMenuReset(){ document.getElementById('menu-reset-confirm').style.display = 'block'; }
+function hideMenuReset(){ document.getElementById('menu-reset-confirm').style.display = 'none'; }
+function updateMenuStats(){
+  const set = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val; };
+  set('ms-money',     fmtMoney(G.money));
+  set('ms-level',     G.level);
+  set('ms-subs',      fmt(G.subs));
+  set('ms-views',     fmt(G.views));
+  set('ms-hype',      Math.floor(G.hype) + '%');
+  set('ms-income',    '$'+smoothedIncome.toFixed(2)+'/s');
+  set('ms-cooks',     G.totalCooks);
+  set('ms-served',    G.totalMealsServed);
+  set('ms-stock',     G.mealStock);
+  set('ms-stall',     fmtMoney(stallTotalEarned));
+  set('ms-spoiled',   G.mealsSpoiled || 0);
+  set('ms-filmed',    G.totalFilmed);
+  set('ms-edits',     G.totalEdits);
+  set('ms-prestiges', G.prestiges);
+  set('ms-managers',  G.managers.length + ' / ' + ACTIONS.filter(a=>a.managerCost).length);
+  set('ms-mx-xp',     'x' + G.mx.xp.toFixed(2));
+  set('ms-mx-sub',    'x' + G.mx.sub.toFixed(2));
+  set('ms-mx-view',   'x' + G.mx.view.toFixed(2));
+  set('ms-mx-speed',  'x' + G.mx.speed.toFixed(2));
+  set('ms-mx-money',  'x' + G.mx.money.toFixed(2));
+  set('ms-clout',     (G.cloutPoints||0) + ' CP (total: ' + (G.totalCloutEarned||0) + ')');
+}
+
+// ════════════════════════════════════════════════
+//  TUTORIAL
+// ════════════════════════════════════════════════
+
+const TUT_STEPS = 4;
+let tutStep = 0;
+
+function buildTutDots(){
+  const el = document.getElementById('tut-dots');
+  el.innerHTML = Array.from({length:TUT_STEPS},(_,i)=>`<div class="tut-dot${i===0?' active':''}"></div>`).join('');
+}
+
+function tutNext(){
+  const steps = document.querySelectorAll('.tut-step');
+  const dots = document.querySelectorAll('.tut-dot');
+  steps[tutStep].classList.remove('active');
+  dots[tutStep].classList.remove('active');
+  tutStep++;
+  if(tutStep >= TUT_STEPS){ closeTutorial(); return; }
+  steps[tutStep].classList.add('active');
+  dots[tutStep].classList.add('active');
+  const btn = document.getElementById('tut-next-btn');
+  btn.textContent = tutStep === TUT_STEPS-1 ? 'Start Cooking! →' : 'Next →';
+}
+
+function closeTutorial(){
+  document.getElementById('tutorial-overlay').style.display='none';
+  try{ localStorage.setItem('ethanTutDone','1'); } catch(e){}
+  addLog('Welcome! Start by clicking "Cook Eggs" to begin your journey.','info');
+}
+
+// ════════════════════════════════════════════════
+//  INIT
+// ════════════════════════════════════════════════
+
+const savedAt = loadGame();
+const loaded = savedAt !== 0;
+
+if(loaded){
+  reapplyUpgrades();
+  ACTIONS.forEach(a=>{ if(isActionUnlocked(a)) prevUnlockedActions.add(a.id); });
+  applyOfflineProgress(savedAt);
+  // Restore non-cook manager loops
+  Object.keys(G.actionTimers).forEach(id=>{
+    if(G.actionTimers[id].running && !COOK_IDS.includes(id)){ startAction(id); }
+  });
+  // Restore active cook loop (only the designated one)
+  if(G.activeCookId && G.actionTimers[G.activeCookId]?.running){
+    startAction(G.activeCookId);
+  }
+  // Re-sync income tracker baseline after load
+  incomeBaseline = G.money;
+  incomeBaselineTime = Date.now();
+  // Notify about offline-expired meals (culled during loadGame)
+  // We surface this after the welcome-back log so it reads in order
+  setTimeout(() => {
+    const offExpired = G.mealsSpoiled;
+    if(offExpired > 0 && loaded){
+      addLog(`While you were away, some meals spoiled (total spoiled all-time: ${offExpired}).`, 'bad');
+    }
+  }, 500);
+}
+
+buildTutDots();
+
+try{
+  if(localStorage.getItem('ethanTutDone')||loaded){
+    document.getElementById('tutorial-overlay').style.display='none';
+    if(loaded) addLog('Welcome back! Your progress has been restored.','info');
+  }
+} catch(e){
+  document.getElementById('tutorial-overlay').style.display='none';
+}
+
+renderAll();
+updateStats();
+updateTitle();
+checkUnlocks();
+
+if(!loaded){
+  addLog('Ethan just moved in. $10 and a dream.','info');
+  addLog('Click "Cook Eggs" to begin!','good');
+}
+</script>
+</body>
+</html>
