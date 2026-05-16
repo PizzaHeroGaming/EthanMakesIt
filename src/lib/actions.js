@@ -92,7 +92,10 @@ export function buyActionLevels(action) {
 export function startAction(id) {
   if (!gs.G.actionTimers[id]) gs.G.actionTimers[id] = { progress: 0, running: false };
   const st = gs.G.actionTimers[id];
-  if (st.running) return;
+  // Only bail if we're already actively ticking this id. A `running: true` flag
+  // without a live RAF handle is stale state (e.g. just restored from a save)
+  // and needs the loop kicked back to life.
+  if (st.running && activeTimers[id]) return;
   st.running = true;
   runActionLoop(id);
 }
