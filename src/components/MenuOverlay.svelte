@@ -106,7 +106,6 @@
           </div>
           <div class="about-links">
             <a href="https://pizzaherogaming.github.io/PizzaHeroGaming/" target="_blank" rel="noopener noreferrer">🍕 More PHG games</a>
-            <a href="https://github.com/PizzaHeroGaming/EthanMakesIt" target="_blank" rel="noopener noreferrer">⚙ Source on GitHub</a>
           </div>
           <details class="about-changelog">
             <summary>Changelog</summary>
