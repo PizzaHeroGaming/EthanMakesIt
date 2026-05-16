@@ -18,7 +18,7 @@
   }
 </script>
 
-<div style="font-size:11px;color:var(--ink2);margin-bottom:10px;line-height:1.55;border-left:3px solid var(--gold);padding:8px 12px;background:#fff8dd;border-radius:0 8px 8px 0">
+<div class="staff-hint">
   Hire staff to automate Content &amp; Business actions forever. Staff unlock when their action unlocks. Auto-Cook is managed from the Actions tab.
 </div>
 

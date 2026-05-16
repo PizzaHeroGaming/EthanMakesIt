@@ -5,14 +5,14 @@ export const ACTIONS = [
     id: 'cook_eggs', name: 'Cook Eggs', icon: '🍳', color: 'green',
     baseTime: 6000, desc: 'Scramble some eggs. The classic beginner move.',
     earn: 'XP +12, Hype +1',
-    unlockAt: { level: 1 },
+    unlockAt: { level: 1 }, baseLevelCost: 1,
     reward(G) { G.xp += Math.floor(12 * G.mx.xp); G.hype = Math.min(100, G.hype + 1); },
   },
   {
     id: 'buy_groceries', name: 'Buy Groceries', icon: '🛒', color: 'gold',
     baseTime: 8000, desc: 'Restock the pantry. Better ingredients mean better videos.',
     earn: 'Hype +6, XP +5',
-    unlockAt: { level: 1, totalCooks: 3 },
+    unlockAt: { level: 1, totalCooks: 3 }, baseLevelCost: 3,
     reward(G) { G.hype = Math.min(100, G.hype + 6); G.xp += Math.floor(5 * G.mx.xp); },
     managerCost: 250, managerName: 'Delivery Service',
   },
@@ -20,7 +20,7 @@ export const ACTIONS = [
     id: 'film_clip', name: 'Film a Clip', icon: '📱', color: 'blue',
     baseTime: 12000, desc: 'Point a phone at the stove and press record. No ring light yet.',
     earn: 'Subs +1–2, XP +10',
-    unlockAt: { level: 1, totalCooks: 5 },
+    unlockAt: { level: 1, totalCooks: 5 }, baseLevelCost: 5,
     reward(G) { const s = Math.max(1, Math.floor((1 + G.level * 0.2) * G.mx.sub * (1 + G.hype / 250))); G.subs += s; const fv = Math.max(2, Math.floor(s * 8 * G.mx.view)); G.views += fv; G.xp += Math.floor(10 * G.mx.xp); },
     managerCost: 350, managerName: 'Camera Intern',
   },
@@ -28,7 +28,7 @@ export const ACTIONS = [
     id: 'edit_video', name: 'Edit Video', icon: '✂️', color: 'blue',
     baseTime: 18000, desc: 'Trim the dead air, add a title card, slap on some royalty-free music.',
     earn: 'Views +30–120, Money, XP +3',
-    unlockAt: { level: 1, totalFilmed: 3 },
+    unlockAt: { level: 1, totalFilmed: 3 }, baseLevelCost: 10,
     reward(G) { const v = Math.max(8, Math.floor((30 + G.subs * 0.04) * G.mx.view * (1 + G.hype / 120))); G.views += v; G.money += Math.max(0.005, v * 0.0003 * (1 + G.level * 0.04)); G.xp += Math.floor(3 * G.mx.xp); },
     managerCost: 500, managerName: 'Video Editor',
   },
@@ -36,14 +36,14 @@ export const ACTIONS = [
     id: 'cook_pasta', name: 'Pasta Carbonara', icon: '🍝', color: 'green',
     baseTime: 9000, desc: 'Level 2 recipe. Rich, indulgent, and you nailed it on the third attempt.',
     earn: 'XP +22, Hype +4',
-    unlockAt: { level: 2 },
+    unlockAt: { level: 2 }, baseLevelCost: 15,
     reward(G) { G.xp += Math.floor(22 * G.mx.xp); G.hype = Math.min(100, G.hype + 4); },
   },
   {
     id: 'promote', name: 'Promote Channel', icon: '📣', color: 'gold',
     baseTime: 16000, desc: 'Post to socials, reply to comments, beg friends to subscribe.',
     earn: 'Subs +3–10, Hype +8',
-    unlockAt: { subs: 10 },
+    unlockAt: { subs: 10 }, baseLevelCost: 25,
     reward(G) { const s = Math.max(1, Math.floor((2 + G.level * 0.4) * G.mx.sub * (1 + G.hype / 150))); G.subs += s; const pv = Math.max(3, Math.floor(s * 5 * G.mx.view)); G.views += pv; G.hype = Math.min(100, G.hype + 8); },
     managerCost: 700, managerName: 'Social Manager',
   },
@@ -51,7 +51,7 @@ export const ACTIONS = [
     id: 'thumbnail', name: 'Design Thumbnail', icon: '🎨', color: 'blue',
     baseTime: 20000, desc: 'A compelling thumbnail doubles your click-through rate. Time well spent.',
     earn: 'Views boost, Hype +10',
-    unlockAt: { level: 2, totalEdits: 3 },
+    unlockAt: { level: 2, totalEdits: 3 }, baseLevelCost: 40,
     reward(G) { const v = Math.max(30, Math.floor((150 + G.subs * 0.08) * G.mx.view * (1 + G.hype / 90))); G.views += v; G.hype = Math.min(100, G.hype + 10); G.money += v * 0.0006; },
     managerCost: 800, managerName: 'Design Intern',
   },
@@ -59,14 +59,14 @@ export const ACTIONS = [
     id: 'cook_stirfry', name: 'Beef Stir Fry', icon: '🥩', color: 'green',
     baseTime: 12000, desc: 'Level 3 recipe. Sizzling wok, bold flavors, confident technique.',
     earn: 'XP +40, Hype +7',
-    unlockAt: { level: 3 },
+    unlockAt: { level: 3 }, baseLevelCost: 60,
     reward(G) { G.xp += Math.floor(40 * G.mx.xp); G.hype = Math.min(100, G.hype + 7); },
   },
   {
     id: 'collab', name: 'Collab with Creator', icon: '🤝', color: 'purple',
     baseTime: 35000, desc: 'Film with another YouTuber. Cross-promotion and fresh audience exposure.',
     earn: 'Subs +30–120, Big views boost',
-    unlockAt: { subs: 75, level: 3 },
+    unlockAt: { subs: 75, level: 3 }, baseLevelCost: 150,
     reward(G) { const s = Math.max(8, Math.floor((20 + G.level * 4) * G.mx.sub * (1 + G.hype / 120))); G.subs += s; const v = Math.max(60, Math.floor((300 + G.subs * 0.12) * G.mx.view)); G.views += v; G.money += v * 0.0007; },
     managerCost: 2000, managerName: 'Collab Coordinator',
   },
@@ -74,7 +74,7 @@ export const ACTIONS = [
     id: 'sponsorship', name: 'Land a Sponsorship', icon: '💼', color: 'gold',
     baseTime: 55000, desc: 'Pitch to brands. One yes changes your whole financial picture.',
     earn: '$60–250, Hype +12',
-    unlockAt: { subs: 300, level: 4 },
+    unlockAt: { subs: 300, level: 4 }, baseLevelCost: 300,
     reward(G) { const m = (60 + G.level * 10) * (1 + G.hype / 100); G.money += m; G.hype = Math.min(100, G.hype + 12); G.xp += Math.floor(35 * G.mx.xp); },
     managerCost: 4000, managerName: 'Brand Agent',
   },
@@ -82,21 +82,21 @@ export const ACTIONS = [
     id: 'cook_sushi', name: 'Sushi Rolls', icon: '🍣', color: 'green',
     baseTime: 15000, desc: 'Level 5 recipe. Precision craft, beautiful presentation — viewers go wild.',
     earn: 'XP +80, Hype +12',
-    unlockAt: { level: 5 },
+    unlockAt: { level: 5 }, baseLevelCost: 500,
     reward(G) { G.xp += Math.floor(80 * G.mx.xp); G.hype = Math.min(100, G.hype + 12); },
   },
   {
     id: 'cook_wellington', name: 'Beef Wellington', icon: '🥩', color: 'green',
     baseTime: 20000, desc: 'Level 6 recipe. Three days of prep, one perfect shot. The ultimate flex.',
     earn: 'XP +150, Hype +18',
-    unlockAt: { level: 6 },
+    unlockAt: { level: 6 }, baseLevelCost: 1200,
     reward(G) { G.xp += Math.floor(150 * G.mx.xp); G.hype = Math.min(100, G.hype + 18); },
   },
   {
     id: 'merch', name: 'Launch Merch Store', icon: '👕', color: 'gold',
     baseTime: 65000, desc: 'Aprons, mugs, Ethan-branded everything. Fans become walking billboards.',
     earn: '$120–500 passive, Subs +20',
-    unlockAt: { subs: 1000, level: 7 },
+    unlockAt: { subs: 1000, level: 7 }, baseLevelCost: 2500,
     reward(G) { const m = (120 + G.subs * 0.01) * (1 + G.hype / 100); G.money += m; const ms = Math.floor(20 * G.mx.sub); G.subs += ms; G.views += Math.max(10, Math.floor(ms * 12 * G.mx.view)); },
     managerCost: 6500, managerName: 'Merch Manager',
   },
@@ -104,14 +104,14 @@ export const ACTIONS = [
     id: 'cook_ramen', name: 'Wagyu Ramen', icon: '🍜', color: 'green',
     baseTime: 25000, desc: 'Level 8 recipe. $200 of ingredients, 6 hours of filming. This one breaks the internet.',
     earn: 'XP +280, Hype +25',
-    unlockAt: { level: 8 },
+    unlockAt: { level: 8 }, baseLevelCost: 6000,
     reward(G) { G.xp += Math.floor(280 * G.mx.xp); G.hype = Math.min(100, G.hype + 25); },
   },
   {
     id: 'viral_video', name: 'Chase a Viral Moment', icon: '🔥', color: 'purple',
     baseTime: 90000, desc: 'Go all-in. Rent a studio, hire a crew, stake it all on one perfect video.',
     earn: 'Subs +600–4000, Views explode',
-    unlockAt: { subs: 5000, level: 9 },
+    unlockAt: { subs: 5000, level: 9 }, baseLevelCost: 18000,
     reward(G) { const s = Math.max(100, Math.floor((300 + G.level * 20) * G.mx.sub * (1 + G.hype / 100))); G.subs += s; const v = Math.max(1500, Math.floor((6000 + G.subs) * G.mx.view)); G.views += v; G.money += v * 0.001; G.hype = Math.min(100, G.hype + 28); },
     managerCost: 15000, managerName: 'Viral Strategist',
   },
@@ -152,7 +152,7 @@ export const MILESTONES_DEF = [
   { id: 'ms13', name: '5,000 Subscribers!',              check: (G) => G.subs >= 5000,        reward: 'All x1.5' },
   { id: 'ms14', name: 'Level 9 Chef',                    check: (G) => G.level >= 9,          reward: 'All x1.5' },
   { id: 'ms15', name: '500,000 Views',                   check: (G) => G.views >= 500000,     reward: 'View gain x2' },
-  { id: 'ms16', name: '100,000 Subscribers — Go Viral!', check: (G) => G.subs >= 100000,      reward: 'Prestige unlocked' },
+  { id: 'ms16', name: '5,000,000 Subscribers — Go Viral!', check: (G) => G.subs >= 5000000,      reward: 'Prestige unlocked' },
 ];
 
 // Milestone reward effects — applied when milestone first completes AND on every reapplyUpgrades.
@@ -316,6 +316,44 @@ export const TICKERS = [
 
 export const COOK_IDS = ['cook_eggs', 'cook_pasta', 'cook_stirfry', 'cook_sushi', 'cook_wellington', 'cook_ramen'];
 export const MAX_MEAL_STOCK = 12;
+
+// Per-action level scaling. Output multiplier = level * milestone bonuses.
+// Cost of level N = baseLevelCost * LEVEL_COST_GROWTH^(N-1).
+export const LEVEL_COST_GROWTH = 1.12;
+
+// Per-action milestone breakpoints (× 1.5 multiplier each when reached).
+export const ACTION_LEVEL_MILESTONES = [25, 100, 400, 1600, 6400];
+
+// Compute current multiplier for an action at a given level.
+// sqrt scaling keeps long-term leveling meaningful without exponential firehose.
+export function actionLevelMultiplier(level) {
+  if (level <= 0) return 0;
+  let mult = Math.sqrt(level);
+  for (const ms of ACTION_LEVEL_MILESTONES) {
+    if (level >= ms) mult *= 1.5;
+  }
+  return mult;
+}
+
+// Cost to buy levels from currentLevel+1 to currentLevel+qty.
+export function actionLevelCost(baseCost, currentLevel, qty) {
+  const g = LEVEL_COST_GROWTH;
+  // sum baseCost * g^(currentLevel + k) for k in 0..qty-1
+  // = baseCost * g^currentLevel * (g^qty - 1) / (g - 1)
+  return baseCost * Math.pow(g, currentLevel) * (Math.pow(g, qty) - 1) / (g - 1);
+}
+
+// How many levels can be afforded with budget.
+export function maxAffordableLevels(baseCost, currentLevel, budget) {
+  if (budget <= 0) return 0;
+  const g = LEVEL_COST_GROWTH;
+  const start = baseCost * Math.pow(g, currentLevel);
+  if (start > budget) return 0;
+  // Solve baseCost * g^currentLevel * (g^qty - 1) / (g - 1) <= budget
+  // => g^qty <= 1 + budget * (g - 1) / (baseCost * g^currentLevel)
+  const ratio = 1 + (budget * (g - 1)) / start;
+  return Math.max(0, Math.floor(Math.log(ratio) / Math.log(g)));
+}
 
 export const MANAGER_META = {
   buy_groceries: { animClass: 'anim-slide',  animIcon: '🛵', role: 'Restocks pantry automatically' },

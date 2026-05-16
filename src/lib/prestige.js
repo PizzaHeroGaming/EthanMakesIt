@@ -42,7 +42,7 @@ export function applyPrestigeStartBonuses() {
     const target = [2, 3, 5][levelTier];
     while (G.level < target) {
       G.level++;
-      G.xpNeeded = Math.floor(G.xpNeeded * 1.45);
+      G.xpNeeded = Math.floor(G.xpNeeded * 1.7);
     }
   }
 }
@@ -54,7 +54,7 @@ export function getHypeDecayRate() {
 }
 
 export function getViralThreshold() {
-  return Math.floor(100000 * Math.pow(1.25, gs.G.prestiges));
+  return Math.floor(5000000 * Math.pow(1.25, gs.G.prestiges));
 }
 
 export function buyPrestigeUpgrade(id, reapply) {

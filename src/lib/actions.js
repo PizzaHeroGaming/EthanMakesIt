@@ -1,7 +1,7 @@
 // Action timer engine, unlock/milestone checks, upgrade purchase, manager hiring.
 
-import { gs, activeTimers, pushNotification, pushFloat, pulseStat } from './state.svelte.js';
-import { ACTIONS, UPGRADES_DEF, MILESTONES_DEF, TITLES, COOK_IDS, MAX_MEAL_STOCK, applyMilestoneRewards } from './data.js';
+import { gs, activeTimers, pushNotification, pushFloat, pulseStat, pushAchievement } from './state.svelte.js';
+import { ACTIONS, UPGRADES_DEF, MILESTONES_DEF, TITLES, COOK_IDS, MAX_MEAL_STOCK, applyMilestoneRewards, actionLevelMultiplier, actionLevelCost, maxAffordableLevels } from './data.js';
 import { SFX } from './audio.js';
 import { applyPrestigeMultipliers, getPrestigeTier, getViralThreshold, calcCloutEarned } from './prestige.js';
 import { stallUnlocked, getMealFreshness } from './stall.js';
@@ -32,6 +32,60 @@ export function isUpgradeUnlocked(u) {
 
 export function getActionDuration(a) {
   return Math.max(500, a.baseTime / gs.G.mx.speed);
+}
+
+export function getActionLevel(id) {
+  return gs.G.actionLevels[id] || 1;
+}
+
+export function getActionMultiplier(id) {
+  return actionLevelMultiplier(getActionLevel(id));
+}
+
+// Sandbox the action's reward fn to compute per-cycle deltas (display only).
+export function previewReward(action) {
+  const G = gs.G;
+  const sandbox = {
+    money: G.money, subs: G.subs, views: G.views, level: G.level,
+    xp: G.xp, hype: G.hype, totalCooks: G.totalCooks,
+    totalFilmed: G.totalFilmed, totalEdits: G.totalEdits,
+    mx: { ...G.mx },
+  };
+  try { action.reward(sandbox); } catch (e) { return null; }
+  const mult = getActionMultiplier(action.id);
+  return {
+    money: Math.max(0, sandbox.money - G.money) * G.mx.money * mult,
+    subs: Math.max(0, sandbox.subs - G.subs) * mult,
+    views: Math.max(0, sandbox.views - G.views) * mult,
+    xp: Math.max(0, sandbox.xp - G.xp), // XP unscaled — same reasoning as collectReward
+    hype: Math.max(0, sandbox.hype - G.hype) * mult,
+  };
+}
+
+// Resolve buy-mode string ('x1', 'x10', 'x100', 'max') to a quantity for an action.
+export function resolveBuyQty(action, mode) {
+  if (mode === 'x1') return 1;
+  if (mode === 'x10') return 10;
+  if (mode === 'x100') return 100;
+  if (mode === 'max') {
+    return Math.max(1, maxAffordableLevels(action.baseLevelCost, getActionLevel(action.id), gs.G.money));
+  }
+  return 1;
+}
+
+export function getBuyCost(action, qty) {
+  return actionLevelCost(action.baseLevelCost, getActionLevel(action.id), qty);
+}
+
+export function buyActionLevels(action) {
+  if (!action.baseLevelCost) return;
+  const qty = resolveBuyQty(action, gs.buyMode);
+  if (qty <= 0) return;
+  const cost = getBuyCost(action, qty);
+  if (gs.G.money < cost) return;
+  gs.G.money -= cost;
+  gs.G.actionLevels[action.id] = getActionLevel(action.id) + qty;
+  SFX.upgrade();
 }
 
 export function startAction(id) {
@@ -110,9 +164,15 @@ export function collectReward(action) {
   if (action.id === 'film_clip') G.totalFilmed++;
   if (action.id === 'edit_video' || action.id === 'thumbnail') G.totalEdits++;
 
+  // Action-level multiplier scales money/subs/views/hype (but NOT XP — keeps Chef Level pacing meaningful).
+  const preReward = { money: G.money, subs: G.subs, views: G.views, xp: G.xp, hype: G.hype };
   action.reward(G);
-  const earned = G.money - before.money;
-  if (earned > 0) G.money = before.money + earned * G.mx.money;
+  const mult = getActionMultiplier(action.id);
+  G.money = preReward.money + (G.money - preReward.money) * G.mx.money * mult;
+  G.subs = preReward.subs + (G.subs - preReward.subs) * mult;
+  G.views = preReward.views + (G.views - preReward.views) * mult;
+  // XP intentionally NOT scaled by action level — Chef Level is a pacing gate.
+  G.hype = Math.min(100, preReward.hype + (G.hype - preReward.hype) * mult);
 
   // Floating numbers — drift up from the action card.
   const cardEl = document.getElementById('ac-' + action.id);
@@ -142,7 +202,7 @@ export function checkLevelUp() {
   while (G.xp >= G.xpNeeded) {
     G.xp -= G.xpNeeded;
     G.level++;
-    G.xpNeeded = Math.floor(G.xpNeeded * 1.45);
+    G.xpNeeded = Math.floor(G.xpNeeded * 1.7);
     SFX.levelUp();
     pushNotification('LEVEL UP — now Level ' + G.level + '!', '');
     leveled = true;
@@ -184,7 +244,7 @@ export function checkMilestones() {
     if (!G.doneMilestones.includes(m.id) && m.check(G)) {
       G.doneMilestones.push(m.id);
       SFX.milestone();
-      pushNotification('🏆 Milestone: ' + m.name, '');
+      pushAchievement(m.name, m.reward);
       applyMilestoneRewards(G, m.id);
     }
   });

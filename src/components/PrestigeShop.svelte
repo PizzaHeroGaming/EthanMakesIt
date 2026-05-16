@@ -28,7 +28,7 @@
   <div class="prestige-empty">
     <div class="big">🌟</div>
     <strong style="color:var(--gold-deep)">Prestige upgrades unlock after your first Go Viral.</strong><br>
-    Reach 100,000 subscribers and go viral to earn<br>
+    Reach 5,000,000 subscribers and go viral to earn<br>
     <span style="color:var(--gold-deep)">Clout Points</span> — use them here for permanent bonuses that carry over into every future run.<br><br>
     <span style="color:var(--muted)">First viral will earn approximately <strong style="color:var(--gold-deep)">{preview} CP</strong>.</span>
   </div>

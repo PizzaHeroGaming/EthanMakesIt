@@ -3,6 +3,7 @@
   import { ACTIONS, COOK_IDS } from '../lib/data.js';
   import { isActionUnlocked } from '../lib/actions.js';
   import ActionCard from './ActionCard.svelte';
+  import BuyModeSelector from './BuyModeSelector.svelte';
 
   const unlockedCooks = $derived(ACTIONS.filter((a) => COOK_IDS.includes(a.id) && isActionUnlocked(a)));
   const unlockedContent = $derived(ACTIONS.filter((a) => !COOK_IDS.includes(a.id) && isActionUnlocked(a)));
@@ -10,6 +11,8 @@
     gs.G.activeCookId ? ACTIONS.find((a) => a.id === gs.G.activeCookId)?.name : null,
   );
 </script>
+
+<BuyModeSelector />
 
 <div class="actions-columns">
   <div class="actions-col">

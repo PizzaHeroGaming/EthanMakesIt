@@ -26,7 +26,7 @@
       {#if gs.tutStep === 0}
         <div class="tut-step active">
           <p>Meet <strong style="color:var(--gold-deep)">Ethan</strong> — a 26-year-old with a tiny apartment kitchen, a secondhand camera, and a dream to become a food YouTube creator.</p>
-          <p>He's got $10, a bag of eggs, and zero subscribers. Your job? Help him build an empire — one recipe at a time.</p>
+          <p>He's got an empty wallet, a bag of eggs, and zero subscribers. Your job? Help him build an empire — one recipe at a time.</p>
           <div class="tut-tip">🎮 This is an idle game. Start actions and let them run — no babysitting required.</div>
         </div>
       {:else if gs.tutStep === 1}
@@ -43,7 +43,7 @@
         </div>
       {:else}
         <div class="tut-step active">
-          <p>Hit <strong style="color:var(--red)">100,000 subscribers</strong> and you can <strong style="color:var(--red)">Go Viral</strong> — a prestige that resets progress but grants permanent multipliers.</p>
+          <p>Hit <strong style="color:var(--red)">5,000,000 subscribers</strong> and you can <strong style="color:var(--red)">Go Viral</strong> — a prestige that resets progress but grants permanent multipliers.</p>
           <p>Each prestige makes everything faster and more rewarding. True FoodTubers go viral more than once.</p>
           <div class="tut-tip">📈 Your first goal: cook something, film it, and get your first subscriber.</div>
         </div>

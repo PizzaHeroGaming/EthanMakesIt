@@ -56,6 +56,7 @@ export function loadGame() {
     gs.G.stallWasUnlocked = gs.G.stallWasUnlocked || false;
     gs.G.activeCookId = gs.G.activeCookId || null;
     gs.G.mealsSpoiled = gs.G.mealsSpoiled || 0;
+    gs.G.actionLevels = gs.G.actionLevels || {};
 
     const now = Date.now();
     const offlineExpired = gs.G.mealQueue.filter(

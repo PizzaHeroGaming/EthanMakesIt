@@ -3,7 +3,7 @@
 
 export function DEFAULT_G() {
   return {
-    money: 10,
+    money: 0,
     subs: 0,
     views: 0,
     level: 1,
@@ -29,6 +29,7 @@ export function DEFAULT_G() {
     activeCookId: null,
     stallWasUnlocked: false,
     actionTimers: {},
+    actionLevels: {}, // map of action id -> level (default 1)
   };
 }
 
@@ -45,7 +46,7 @@ export const gs = $state({
   prevUnlockedUpgrades: new Set(),
 
   // Income tracker
-  incomeBaseline: 10,
+  incomeBaseline: 0,
   incomeBaselineTime: Date.now(),
   smoothedIncome: 0,
 
@@ -60,6 +61,9 @@ export const gs = $state({
 
   // Ticker
   tickIdx: 0,
+
+  // Buy-amount mode for action levels
+  buyMode: (() => { try { return localStorage.getItem('ethanBuyMode') || 'x1'; } catch (e) { return 'x1'; } })(),
 
   // Prestige modal snapshots
   _pmodCloutSnapshot: 0,
@@ -80,6 +84,7 @@ export const gs = $state({
   // Notifications & floating numbers
   notifications: [], // {id, msg, cls}
   floats: [], // {id, x, y, text, cls}
+  achievements: [], // {id, name, reward} — big center popups for milestones
   pulses: {}, // map of stat key -> timestamp (for counter scale-punch)
 });
 
@@ -112,4 +117,14 @@ export function pushFloat(text, x, y, cls = 'green') {
 
 export function pulseStat(key) {
   gs.pulses[key] = Date.now();
+}
+
+let nextAchId = 1;
+export function pushAchievement(name, reward) {
+  const id = nextAchId++;
+  gs.achievements.push({ id, name, reward });
+  setTimeout(() => {
+    const i = gs.achievements.findIndex((a) => a.id === id);
+    if (i !== -1) gs.achievements.splice(i, 1);
+  }, 3600);
 }
