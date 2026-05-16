@@ -51,11 +51,11 @@
 
   let timers = [];
   onMount(() => {
-    // Idle bob
+    // Subtle breathing — only the upper body moves, ~3s per cycle, max 0.6px.
     timers.push(setInterval(() => {
-      bobOffset += bobDir * 0.4;
-      if (Math.abs(bobOffset) > 1.6) bobDir *= -1;
-    }, 80));
+      bobOffset += bobDir * 0.06;
+      if (Math.abs(bobOffset) > 0.6) bobDir *= -1;
+    }, 140));
 
     // Random blink every 2-5s
     function scheduleBlink() {
@@ -254,14 +254,14 @@
       {/if}
     </g>
 
-    <!-- Ethan -->
-    <g transform={`translate(0,${bobOffset.toFixed(1)})`}>
-      <!-- legs -->
-      <rect x="146" y="148" width="9" height="22" fill="#2c3540" rx="1"/>
-      <rect x="159" y="148" width="9" height="22" fill="#2c3540" rx="1"/>
-      <!-- shoes -->
-      <ellipse cx="150" cy="172" rx="6" ry="2" fill="#1a1a1a"/>
-      <ellipse cx="163" cy="172" rx="6" ry="2" fill="#1a1a1a"/>
+    <!-- Ethan — legs/shoes are planted, upper body breathes subtly -->
+    <!-- legs (anchored to floor) -->
+    <rect x="146" y="148" width="9" height="22" fill="#2c3540" rx="1"/>
+    <rect x="159" y="148" width="9" height="22" fill="#2c3540" rx="1"/>
+    <!-- shoes (anchored to floor) -->
+    <ellipse cx="150" cy="172" rx="6" ry="2" fill="#1a1a1a"/>
+    <ellipse cx="163" cy="172" rx="6" ry="2" fill="#1a1a1a"/>
+    <g transform={`translate(0,${bobOffset.toFixed(2)})`}>
       <!-- apron back of shirt -->
       <rect x="139" y="98" width="36" height="52" fill="#3a76b8" rx="2"/>
       <!-- chef apron front -->
