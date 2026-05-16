@@ -255,6 +255,19 @@ button:disabled { cursor: not-allowed; }
   font-size: 11px;
   letter-spacing: 0.2px;
 }
+.chat-badge {
+  display: inline-block;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  padding: 1px 5px;
+  border-radius: 3px;
+  background: var(--gold);
+  color: #1a1a24;
+  margin-right: 5px;
+  vertical-align: middle;
+  text-transform: uppercase;
+}
 .chat-text { color: var(--ink2); }
 .chat-empty {
   text-align: center;

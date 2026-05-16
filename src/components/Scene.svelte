@@ -57,6 +57,7 @@
   <div class="chat-list" bind:this={listEl}>
     {#each gs.chatMessages as m (m.id)}
       <div class="chat-msg" class:vip={m.vip}>
+        {#if m.name === 'sendfood'}<span class="chat-badge">CREATOR</span>{/if}
         <span class="chat-user" style="color:{m.color}">@{m.name}</span>
         <span class="chat-text">{m.text}</span>
       </div>

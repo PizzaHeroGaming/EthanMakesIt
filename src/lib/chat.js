@@ -174,15 +174,28 @@ export const COMMENTS = {
     'genuinely begging for mayo here',
     'cant believe theres no mayo on this',
   ],
-  // @sendfood-specific banter
+  // @sendfood is Ethan — the creator chatting back to his own audience.
   sendfood: [
-    'love u brotha',
-    'okay im stealing the recipe ngl',
-    'when we collabing again',
-    'this is the move',
-    'GOATED meal',
-    'plate me up next',
-    'imma try this tonight',
+    'yall ready for this one',
+    'thanks for hanging out',
+    'real ones know',
+    'shoutout the chat',
+    'next video drops sunday',
+    'wait til you see whats next',
+    'kitchens cooking tonight',
+    'this is the one',
+    'appreciate every single one of you',
+    'okay one more recipe and then im eating',
+    'small batch tonight, big batch tomorrow',
+    'follow for more',
+    'we will get there',
+    'no notes from me — clip it',
+    'first time trying this on stream lol',
+    'recipe in the description as always',
+    'who needs seconds',
+    'tell me what to make next',
+    'gonna film one more clip then call it',
+    'low key proud of this one',
   ],
 };
 
@@ -210,7 +223,7 @@ export function makeMessage(category, viewer) {
   // ~6% chance any random viewer drops the mayo bit, regardless of context.
   if (Math.random() < 0.06) {
     text = pickComment('mayo');
-  } else if (v.name === 'sendfood' && Math.random() < 0.5) {
+  } else if (v.name === 'sendfood' && Math.random() < 0.85) {
     text = pickComment('sendfood');
   } else {
     text = pickComment(category);
