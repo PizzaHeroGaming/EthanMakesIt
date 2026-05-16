@@ -22,6 +22,13 @@ export const VIEWERS = [
   { name: 'CulinaryCarl',    color: '#d4a824' },
   { name: 'PanFried',        color: '#ff8a8a' },
   { name: 'ChefDad42',       color: '#52c0c8' },
+  // Friends of the channel
+  { name: 'tacticizm',       color: '#5dd9c1', weight: 4 },
+  { name: 'yourpizzahero',   color: '#ff6b6b', weight: 4 },
+  { name: 'theboysquared',   color: '#9ac9ff', weight: 4 },
+  { name: 'journeygames',    color: '#ffb56b', weight: 4 },
+  { name: 'animeBJ',         color: '#ff7ed1', weight: 4 },
+  { name: 'redhead',         color: '#ff5a3c', weight: 4 },
 ];
 
 // Comments grouped by trigger context.
@@ -151,6 +158,22 @@ export const COMMENTS = {
     '🥳🥳🥳',
     'this calls for cake',
   ],
+  // The mayo running gag — fires occasionally from any random viewer.
+  mayo: [
+    'needs more mayo',
+    'more mayo pls',
+    'wheres the mayo',
+    'add mayo',
+    'mayo would fix it',
+    'a little mayo wouldnt hurt',
+    'controversial: mayo on that',
+    'MAYO',
+    'one more dollop of mayo and chef kiss',
+    'this slaps but mayo would slap harder',
+    'okay but where mayo',
+    'genuinely begging for mayo here',
+    'cant believe theres no mayo on this',
+  ],
   // @sendfood-specific banter
   sendfood: [
     'love u brotha',
@@ -184,7 +207,10 @@ export function pickComment(category) {
 export function makeMessage(category, viewer) {
   const v = viewer || pickViewer();
   let text;
-  if (v.name === 'sendfood' && Math.random() < 0.5) {
+  // ~6% chance any random viewer drops the mayo bit, regardless of context.
+  if (Math.random() < 0.06) {
+    text = pickComment('mayo');
+  } else if (v.name === 'sendfood' && Math.random() < 0.5) {
     text = pickComment('sendfood');
   } else {
     text = pickComment(category);
