@@ -1,6 +1,7 @@
 // Action timer engine, unlock/milestone checks, upgrade purchase, manager hiring.
 
-import { gs, activeTimers, pushNotification, pushFloat, pulseStat, pushAchievement } from './state.svelte.js';
+import { gs, activeTimers, pushNotification, pushFloat, pulseStat, pushAchievement, pushChatMessage } from './state.svelte.js';
+import { makeMessage } from './chat.js';
 import { ACTIONS, UPGRADES_DEF, MILESTONES_DEF, TITLES, COOK_IDS, MAX_MEAL_STOCK, applyMilestoneRewards, actionLevelMultiplier, actionLevelCost, maxAffordableLevels } from './data.js';
 import { SFX } from './audio.js';
 import { applyPrestigeMultipliers, getPrestigeTier, getViralThreshold, calcCloutEarned } from './prestige.js';
@@ -191,6 +192,15 @@ export function collectReward(action) {
     if (xpEarned > 0) { pushFloat('+' + fmt(xpEarned) + ' XP', cx, cy + offset, 'gold'); }
   }
 
+  // Occasional themed chat comment when an action completes. Lower probability
+  // for fast-cycling actions so they don't spam the feed.
+  const chatRoll = Math.random();
+  const cycleSec = (action.baseTime || 6000) / 1000;
+  const baseChance = Math.min(0.35, 0.1 + cycleSec / 60);
+  if (chatRoll < baseChance) {
+    pushChatMessage(makeMessage(action.id));
+  }
+
   checkLevelUp();
   checkUnlocks();
   checkMilestones();
@@ -246,6 +256,10 @@ export function checkMilestones() {
       SFX.milestone();
       pushAchievement(m.name, m.reward);
       applyMilestoneRewards(G, m.id);
+      // Three quick celebratory chat messages.
+      for (let i = 0; i < 3; i++) {
+        setTimeout(() => pushChatMessage(makeMessage('milestone')), 200 + i * 400);
+      }
     }
   });
 }

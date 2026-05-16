@@ -86,6 +86,9 @@ export const gs = $state({
   floats: [], // {id, x, y, text, cls}
   achievements: [], // {id, name, reward} — big center popups for milestones
   pulses: {}, // map of stat key -> timestamp (for counter scale-punch)
+
+  // Live chat feed
+  chatMessages: [], // {id, name, color, text, vip}
 });
 
 // Animation-frame timers live outside the reactive state.
@@ -127,4 +130,10 @@ export function pushAchievement(name, reward) {
     const i = gs.achievements.findIndex((a) => a.id === id);
     if (i !== -1) gs.achievements.splice(i, 1);
   }, 3600);
+}
+
+const MAX_CHAT = 40;
+export function pushChatMessage(msg) {
+  gs.chatMessages.push(msg);
+  while (gs.chatMessages.length > MAX_CHAT) gs.chatMessages.shift();
 }
