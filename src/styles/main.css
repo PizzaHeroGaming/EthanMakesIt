@@ -191,7 +191,7 @@ button:disabled { cursor: not-allowed; }
   background: linear-gradient(180deg, #2a3550 0%, #1a2540 100%);
   border-radius: 12px;
   overflow: hidden;
-  height: 150px;
+  height: 200px;
   position: relative;
   box-shadow: var(--shadow);
 }
@@ -1099,6 +1099,33 @@ button:disabled { cursor: not-allowed; }
 .menu-btn-row { display: flex; gap: 8px; }
 #menu-save-time { font-size: 10px; color: var(--muted); margin-top: 8px; }
 .menu-reset-confirm { margin-top: 10px; background: var(--inset-soft); border: 2px solid var(--red); border-radius: 10px; padding: 10px 14px; font-size: 11px; color: var(--red); line-height: 1.6; }
+
+/* ── ABOUT ── */
+.about-block { font-size: 12px; line-height: 1.55; color: var(--ink2); }
+.about-title { font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: var(--gold-deep); letter-spacing: 2px; line-height: 1; margin-bottom: 2px; }
+.about-sub { font-size: 10px; color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 10px; }
+.about-credits { margin-bottom: 8px; }
+.about-credits strong { color: var(--red); }
+.about-links { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
+.about-links a {
+  display: inline-block;
+  padding: 6px 10px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--ink);
+  text-decoration: none;
+  font-size: 11px;
+  font-weight: 600;
+  transition: all 0.12s;
+}
+.about-links a:hover { border-color: var(--gold); color: var(--gold-deep); background: var(--inset-soft-2); }
+.about-changelog { font-size: 11px; }
+.about-changelog summary { cursor: pointer; color: var(--ink2); font-weight: 600; padding: 4px 0; user-select: none; }
+.about-changelog summary:hover { color: var(--ink); }
+.about-changelog ul { margin: 6px 0 0 18px; padding: 0; }
+.about-changelog li { margin: 4px 0; color: var(--muted); }
+.about-changelog li strong { color: var(--ink); }
 .menu-reset-confirm .confirm-btns { display: flex; gap: 6px; margin-top: 8px; }
 .confirm-yes, .confirm-no { flex: 1; padding: 7px; font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; border-radius: 6px; }
 .confirm-yes { background: var(--red); color: #fff; }

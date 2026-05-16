@@ -95,6 +95,30 @@
           </div>
         {/if}
       </div>
+
+      <div class="menu-section">
+        <div class="menu-section-title">ℹ About</div>
+        <div class="about-block">
+          <div class="about-title">ETHAN MAKES IT</div>
+          <div class="about-sub">A FoodTube Idle RPG · v0.2.0</div>
+          <div class="about-credits">
+            Made by <strong>Pizza Hero Gaming</strong>
+          </div>
+          <div class="about-links">
+            <a href="https://pizzaherogaming.github.io/PizzaHeroGaming/" target="_blank" rel="noopener noreferrer">🍕 More PHG games</a>
+            <a href="https://github.com/PizzaHeroGaming/EthanMakesIt" target="_blank" rel="noopener noreferrer">⚙ Source on GitHub</a>
+          </div>
+          <details class="about-changelog">
+            <summary>Changelog</summary>
+            <ul>
+              <li><strong>v0.2.0</strong> — Per-action levels with Buy ×1/×10/×100/Max selector, milestone breakpoints, sqrt scaling. New viral target 5M subs. Achievement popups for milestones.</li>
+              <li><strong>v0.1.5</strong> — Light/dark theme toggle, AdCap-style visual language, floating reward numbers, header counter punch.</li>
+              <li><strong>v0.1.0</strong> — Migrated to Svelte 5. Per-card $/s preview, click bounce, completion flash.</li>
+              <li><strong>v0.0.1</strong> — Initial single-file prototype.</li>
+            </ul>
+          </details>
+        </div>
+      </div>
     </div>
   </div>
 {/if}
