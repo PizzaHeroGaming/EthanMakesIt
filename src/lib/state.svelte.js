@@ -73,7 +73,7 @@ export const gs = $state({
   prestigeModalOpen: false,
 
   // Theme
-  theme: (() => { try { return localStorage.getItem('ethanTheme') || 'light'; } catch (e) { return 'light'; } })(),
+  theme: (() => { try { return localStorage.getItem('ethanTheme') || 'dark'; } catch (e) { return 'dark'; } })(),
 
   // Menu / overlays
   menuOpen: false,
