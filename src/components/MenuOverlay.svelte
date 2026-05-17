@@ -106,6 +106,7 @@
           </div>
           <div class="about-links">
             <a href="https://pizzaherogaming.github.io/PizzaHeroGaming/" target="_blank" rel="noopener noreferrer">🍕 More PHG games</a>
+            <a href="https://discord.gg/WPsNeR7wyJ" target="_blank" rel="noopener noreferrer">💬 Join the Discord</a>
           </div>
           <details class="about-changelog">
             <summary>Changelog</summary>
