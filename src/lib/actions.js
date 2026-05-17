@@ -259,9 +259,10 @@ export function checkMilestones() {
       SFX.milestone();
       pushAchievement(m.name, m.reward);
       applyMilestoneRewards(G, m.id);
-      // Three quick celebratory chat messages.
+      // Three quick celebratory chat messages — force past the throttle so the
+      // milestone moment actually feels like a burst.
       for (let i = 0; i < 3; i++) {
-        setTimeout(() => pushChatMessage(makeMessage('milestone')), 200 + i * 400);
+        setTimeout(() => pushChatMessage(makeMessage('milestone'), { force: true }), 200 + i * 400);
       }
     }
   });

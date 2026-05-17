@@ -7,9 +7,9 @@
   let listEl;
   let ambientTimer;
 
-  // Ambient chatter: every 4-9s, push a comment scoped to the current activity.
+  // Ambient chatter: every 6-12s, push a comment scoped to the current activity.
   function scheduleAmbient() {
-    const wait = 4000 + Math.random() * 5000;
+    const wait = 6000 + Math.random() * 6000;
     ambientTimer = setTimeout(() => {
       const runningCookId = ['cook_eggs','cook_pasta','cook_stirfry','cook_sushi','cook_wellington','cook_ramen']
         .find((id) => gs.G.actionTimers[id]?.running);

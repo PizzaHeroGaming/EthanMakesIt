@@ -133,7 +133,13 @@ export function pushAchievement(name, reward) {
 }
 
 const MAX_CHAT = 40;
-export function pushChatMessage(msg) {
+const CHAT_MIN_GAP_MS = 1400; // throttle: at most ~1 message per 1.4s
+let lastChatAt = 0;
+export function pushChatMessage(msg, opts) {
+  const now = Date.now();
+  // `force: true` bypasses throttle (used for milestone celebrations).
+  if (!(opts && opts.force) && now - lastChatAt < CHAT_MIN_GAP_MS) return;
+  lastChatAt = now;
   gs.chatMessages.push(msg);
   while (gs.chatMessages.length > MAX_CHAT) gs.chatMessages.shift();
 }
