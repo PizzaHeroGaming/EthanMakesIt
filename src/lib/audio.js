@@ -42,12 +42,30 @@ function _noise(dur = 0.08, vol = 0.08, delay = 0) {
   } catch (e) {}
 }
 
+// Per-effect throttle so spam-fire SFX (cook/film/complete from many auto-loops)
+// don't pile up into a wall of noise. Each entry: { gap, last }.
+const _throttle = {
+  complete: { gap: 350, last: 0 },
+  cook:     { gap: 350, last: 0 },
+  film:     { gap: 350, last: 0 },
+  serve:    { gap: 200, last: 0 },
+  miss:     { gap: 300, last: 0 },
+};
+function _throttled(name, fn) {
+  const t = _throttle[name];
+  if (!t) return fn();
+  const now = Date.now();
+  if (now - t.last < t.gap) return;
+  t.last = now;
+  fn();
+}
+
 export const SFX = {
-  complete() { _tone(523, 'sine', 0.13, 0.18); _tone(784, 'sine', 0.10, 0.13, 0.07); },
-  cook() { _noise(0.06, 0.12); _tone(220, 'sine', 0.12, 0.12, 0.02); _tone(330, 'triangle', 0.08, 0.1, 0.06); },
-  film() { _noise(0.04, 0.18); _tone(1200, 'sine', 0.04, 0.08, 0.02); },
-  serve() { _tone(1047, 'square', 0.06, 0.12); _tone(1319, 'square', 0.05, 0.10, 0.05); _tone(1568, 'sine', 0.12, 0.18, 0.09); },
-  miss() { _tone(330, 'sine', 0.10, 0.12); _tone(220, 'sine', 0.12, 0.10, 0.08); _tone(165, 'sine', 0.10, 0.08, 0.16); },
+  complete() { _throttled('complete', () => { _tone(523, 'sine', 0.13, 0.18); _tone(784, 'sine', 0.10, 0.13, 0.07); }); },
+  cook() { _throttled('cook', () => { _noise(0.06, 0.12); _tone(220, 'sine', 0.12, 0.12, 0.02); _tone(330, 'triangle', 0.08, 0.1, 0.06); }); },
+  film() { _throttled('film', () => { _noise(0.04, 0.18); _tone(1200, 'sine', 0.04, 0.08, 0.02); }); },
+  serve() { _throttled('serve', () => { _tone(1047, 'square', 0.06, 0.12); _tone(1319, 'square', 0.05, 0.10, 0.05); _tone(1568, 'sine', 0.12, 0.18, 0.09); }); },
+  miss() { _throttled('miss', () => { _tone(330, 'sine', 0.10, 0.12); _tone(220, 'sine', 0.12, 0.10, 0.08); _tone(165, 'sine', 0.10, 0.08, 0.16); }); },
   levelUp() { [523, 659, 784, 1047].forEach((f, i) => _tone(f, 'sine', 0.20, 0.28, i * 0.10)); _tone(1047, 'triangle', 0.30, 0.20, 0.42); },
   unlock() { _tone(880, 'sine', 0.10, 0.18); _tone(1100, 'sine', 0.14, 0.22, 0.07); _tone(1320, 'sine', 0.10, 0.16, 0.14); },
   milestone() { [523, 659, 784, 1047, 1319].forEach((f, i) => _tone(f, 'triangle', 0.22, 0.28, i * 0.08)); },
