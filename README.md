@@ -108,4 +108,5 @@ Fonts: [Bebas Neue](https://fonts.google.com/specimen/Bebas+Neue), [DM Mono](htt
 
 © 2026 Pizza Hero Gaming. All rights reserved.
 
-More PHG games: [pizzaherogaming.github.io/PizzaHeroGaming/](https://pizzaherogaming.github.io/PizzaHeroGaming/)
+- More PHG games: [pizzaherogaming.github.io/PizzaHeroGaming/](https://pizzaherogaming.github.io/PizzaHeroGaming/)
+- Discord: [discord.gg/WPsNeR7wyJ](https://discord.gg/WPsNeR7wyJ)
